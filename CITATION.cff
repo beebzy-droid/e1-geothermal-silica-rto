@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it using these metadata."
+title: "Physics-Informed Soft Sensing and Real-Time Inhibitor Optimization for Silica Scaling Mitigation in Philippine Liquid-Dominated Geothermal Brine Systems"
+authors:
+  - family-names: "Busico"
+    given-names: "Bien"
+type: software
+repository-code: "https://github.com/beebzy-droid/ipis-thesis-geothermal-silica"
+license: MIT
+version: "0.1.0"
+date-released: "2026-07-13"
+keywords:
+  - geothermal
+  - silica scaling
+  - soft sensor
+  - real-time optimization
+  - process control
+# doi: 10.5281/zenodo.XXXXXXX   # minted at pre-submission release (P9)

@@ -1,0 +1,63 @@
+% E1 manuscript — Journal of Process Control (elsarticle)
+% Compile: see compile.bat / README. Easiest path: upload manuscript/latex/,
+% figures/, and literature/references.bib to Overleaf as one project.
+\documentclass[review,number,sort&compress]{elsarticle}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\graphicspath{{../../figures/}}
+
+\journal{Journal of Process Control}
+
+\begin{document}
+\begin{frontmatter}
+
+\title{A credibility-weighted hybrid soft sensor and uncertainty-consuming
+robust real-time optimization for silica scaling control in Philippine
+geothermal fields: design, negative results, and out-of-sample
+validation}
+
+% AUTHOR METADATA (confirmed by author): sole author, no adviser
+% (independent thesis). Affiliation: University of the Philippines
+% Diliman (author decision, 2026-11-05).
+\author[upd]{Bien Don Busico}
+\ead{bienbusico@gmail.com}
+\affiliation[upd]{organization={University of the Philippines Diliman},
+city={Quezon City}, country={Philippines}}
+
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\begin{keyword}
+soft sensor \sep hybrid modeling \sep real-time optimization \sep
+plant--model mismatch \sep geothermal energy \sep silica scaling \sep
+Philippines
+\end{keyword}
+
+\end{frontmatter}
+
+\input{sections/01_intro}
+\input{sections/02_benchmark}
+\input{sections/03_architecture}
+\input{sections/04_insilico_results}
+\input{sections/05_validation}
+\input{sections/06_discussion}
+\input{sections/07_conclusions}
+
+\section*{Acknowledgments}
+The author thanks Dr.~Samuel Scott for directing him to the study's
+supplementary dataset, for clarifying the published parameterization
+and its corrigendum, and for providing a reference implementation
+script used for cross-checking, which is not redistributed with this
+work. This work received no external funding.
+
+\appendix
+\input{sections/appendix}
+
+\bibliographystyle{elsarticle-num}
+\bibliography{references}   % copied in by compile.bat from /literature
+
+\end{document}

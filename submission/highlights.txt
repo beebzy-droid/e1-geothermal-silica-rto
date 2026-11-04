@@ -1,0 +1,7 @@
+Highlights
+
+- A hybrid soft sensor weights its learned correction by leave-one-out credibility
+- A robust economic RTO consumes the sensor's own uncertainty as constraint back-off
+- Only tested policy near violation-free under benign and sixfold kinetic mismatch
+- Two pre-registered negative results motivate the design and are reported as results
+- Kinetics, solubility and the sensing pattern validated on independent 2024 data

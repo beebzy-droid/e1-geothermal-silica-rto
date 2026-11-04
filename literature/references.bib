@@ -1,0 +1,606 @@
+% ============================================================================
+% ipis-thesis-geothermal-silica — references.bib
+% P1 deliverable. Generated 2026-07-14.
+%
+% CITATION INTEGRITY PROTOCOL
+% Every entry carries two custom fields:
+%   note     = {TIER: T1|T2|T3 | STATUS: VERIFIED|PROVISIONAL}
+%   VERIFIED    = bibliographic details confirmed against a live source
+%                 (publisher page, DOI resolver, OSTI, or institutional
+%                 repository) during the P1 web review on 2026-07-14.
+%   PROVISIONAL = work certainly exists (seen in ≥1 independent citation
+%                 list) but volume/pages/DOI NOT yet confirmed at source.
+%                 DO NOT cite in the manuscript until resolved in Zotero.
+%
+% Evidence tiers (per src/evidence.py):
+%   T1 = peer-reviewed journal        T2 = conference / institutional report
+%   T3 = vendor / trade-press claim   T4 = unverified
+% T3 entries are MOTIVATION ONLY — never fitted parameters, never
+% validation targets (validate_target() enforces this).
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% THREAD 1 — Amorphous silica solubility, polymerization, deposition kinetics
+% ----------------------------------------------------------------------------
+
+@article{weres1981kinetics,
+  author  = {Weres, Oleh and Yee, Andrew and Tsao, Leon},
+  title   = {Kinetics of silica polymerization},
+  journal = {Journal of Colloid and Interface Science},
+  year    = {1981},
+  volume  = {84},
+  number  = {2},
+  pages   = {379--402},
+  doi     = {10.1016/0021-9797(81)90230-7},
+  note    = {TIER: T1 | STATUS: VERIFIED (DOI + Springer/ScienceDirect ref lists, 2026-07-14)}
+}
+
+@article{weres1982equations,
+  author  = {Weres, Oleh and Yee, Andrew and Tsao, Leon},
+  title   = {Equations and type curves for predicting the polymerization of amorphous silica in geothermal brines},
+  journal = {Society of Petroleum Engineers Journal},
+  year    = {1982},
+  volume  = {22},
+  number  = {1},
+  pages   = {9--16},
+  note    = {TIER: T1 | STATUS: VERIFIED existence (OSTI ID 6821418); vol/pages PROVISIONAL}
+}
+
+@article{gunnarsson2000amorphous,
+  author  = {Gunnarsson, Ingvi and Arn{\'o}rsson, Stef{\'a}n},
+  title   = {Amorphous silica solubility and the thermodynamic properties of {H$_4$SiO$_4^\circ$} in the range of 0{\textdegree} to 350{\textdegree}C at {$P_{sat}$}},
+  journal = {Geochimica et Cosmochimica Acta},
+  year    = {2000},
+  volume  = {64},
+  number  = {13},
+  pages   = {2295--2307},
+  doi     = {10.1016/S0016-7037(99)00426-3},
+  note    = {TIER: T1 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-14, in /literature). Eqn. 4 + Table 2 constants transcribed into src/silica_saturation.py (PRIMARY solubility correlation, strict-mode verified; paper anchor logK(25C)=-2.713 reproduced)}
+}
+
+@article{rimstidt1980kinetics,
+  author  = {Rimstidt, J. Donald and Barnes, Hubert L.},
+  title   = {The kinetics of silica-water reactions},
+  journal = {Geochimica et Cosmochimica Acta},
+  year    = {1980},
+  volume  = {44},
+  number  = {11},
+  pages   = {1683--1699},
+  doi     = {10.1016/0016-7037(80)90220-3},
+  note    = {TIER: T1 | STATUS: VERIFIED (Crossref/ScienceDirect+ADS, 2026-07-15). Precipitation log k- = -0.707 - 2598/T, Eact 49.8 kJ/mol — contrast to RR79-fitted 9.1 kJ/mol polymerization regime (P6 comparison)}
+}
+
+@article{fournier1977solubility,
+  author  = {Fournier, Robert O. and Rowe, Jack J.},
+  title   = {The solubility of amorphous silica in water at high temperatures and high pressures},
+  journal = {American Mineralogist},
+  year    = {1977},
+  volume  = {62},
+  pages   = {1052--1056},
+  note    = {TIER: T1 | STATUS: PROVISIONAL — standard reference; confirm pages/vol in Zotero}
+}
+
+@article{rothbaum1979effect,
+  author  = {Rothbaum, H. P. and Anderton, B. H. and Harrison, R. F. and Rohde, A. G.},
+  title   = {Effect of silica polymerisation and {pH} on geothermal scaling},
+  journal = {Geothermics},
+  year    = {1979},
+  volume  = {8},
+  number  = {1},
+  pages   = {1--20},
+  note    = {TIER: T1 | STATUS: VERIFIED existence (ScienceDirect PII 0375650579900622); author list/pages PROVISIONAL. NOTE: distinct from rothbaum1979rohde (JCIS) — do not conflate}
+}
+
+@article{rothbaum1979rohde,
+  author  = {Rothbaum, H. P. and Rohde, A. G.},
+  title   = {Kinetics of silica polymerization and deposition from dilute solutions between 5 and 180{\textdegree}{C}},
+  journal = {Journal of Colloid and Interface Science},
+  year    = {1979},
+  volume  = {71},
+  number  = {3},
+  doi     = {10.1016/0021-9797(79)90328-X},
+  note    = {TIER: T1 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-14, in /literature). KEY for Limitation A: data span 5-180 degC bracketing the 150 degC line; max polymerization rate DECREASES 90-180 degC; ~4th-order kinetics in supersaturation with induction periods (R*P^1.5 ~ const at fixed T); Ea ~ 3 kcal/mol for 5-90 degC. Primary kinetics source for module 3; Table II transcription protocol in src/data/}
+}
+
+@article{bohlmann1980kinetics,
+  author  = {Bohlmann, E. G. and Mesmer, R. E. and Berlinski, P.},
+  title   = {Kinetics of silica deposition from simulated geothermal brines},
+  journal = {Society of Petroleum Engineers Journal},
+  year    = {1980},
+  note    = {TIER: T1 | STATUS: PROVISIONAL — existence confirmed in multiple citation lists; resolve journal/vol/pages in Zotero}
+}
+
+@article{vandenheuvel2018understanding,
+  author  = {van den Heuvel, Daniela B. and Gunnlaugsson, Einar and Gunnarsson, Ingvi and Stawski, Tomasz M. and Peacock, Caroline L. and Benning, Liane G.},
+  title   = {Understanding amorphous silica scaling under well-constrained conditions inside geothermal pipelines},
+  journal = {Geothermics},
+  year    = {2018},
+  volume  = {76},
+  pages   = {231--241},
+  note    = {TIER: T1 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-14, in /literature). Priority P3/P5 validation-shaped dataset (in-pipeline scaling, Hellisheidi)}
+}
+
+@article{scott2024silica,
+  author  = {Scott, Samuel and Galeczka, Iwona M. and Gunnarsson, Ingvi and Arn{\'o}rsson, Stef{\'a}n and Stef{\'a}nsson, Andri},
+  title   = {Silica polymerization and nanocolloid nucleation and growth kinetics in aqueous solutions},
+  journal = {Geochimica et Cosmochimica Acta},
+  year    = {2024},
+  volume  = {371},
+  pages   = {78--94},
+  doi     = {10.1016/j.gca.2024.02.017},
+  note    = {TIER: T1 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-14, in /literature; GCA 371:78-94; DOI from corrigendum front matter). Modern kinetics benchmark for P6. FULL EXPERIMENTAL DATASET available as Supplementary Excel on the article page (confirmed by corresponding author S. Scott, email 2026-07; cite the article for the data). WARNING: a CORRIGENDUM corrects a parameterization error in the published article — cite BOTH once retrieved (scott2024corrigendum); author-provided corrected model script archived at reference/scott2024_model_author_provided.py}
+}
+
+@article{dixit2016experimental,
+  author  = {Dixit, C. and Bernard, M.-L. and Sanjuan, B. and Andr{\'e}, L. and Gaspard, S.},
+  title   = {Experimental study on the kinetics of silica polymerization during cooling of the {Bouillante} geothermal fluid ({Guadeloupe}, {French West Indies})},
+  journal = {Chemical Geology},
+  year    = {2016},
+  note    = {TIER: T1 | STATUS: VERIFIED existence (ScienceDirect PII S0009254116304089); vol/pages PROVISIONAL}
+}
+
+@techreport{weres1980lbl,
+  author      = {Weres, Oleh and Yee, Andrew and Tsao, Leon},
+  title       = {Kinetics of Silica Polymerization},
+  institution = {Lawrence Berkeley Laboratory},
+  number      = {LBL-7033},
+  year        = {1980},
+  note        = {TIER: T2 | STATUS: VERIFIED (OSTI ID 5195604). Full experimental report behind weres1981kinetics; 23--100{\textdegree}C, wide pH/salinity range}
+}
+
+% ----------------------------------------------------------------------------
+% THREAD 2 — Scale inhibition: inhibitor chemistry, dose-response, pH mod
+% ----------------------------------------------------------------------------
+
+@article{gallup2002investigations,
+  author  = {Gallup, Darrell L.},
+  title   = {Investigations of organic inhibitors for silica scale control in geothermal brines},
+  journal = {Geothermics},
+  year    = {2002},
+  volume  = {31},
+  number  = {4},
+  pages   = {415--430},
+  doi     = {10.1016/S0375-6505(02)00004-4},
+  note    = {TIER: T1 | STATUS: VERIFIED (ScienceDirect+ADS, 2026-07-15). N5 anchor confirmed from abstract: single inhibitor >50\% reduction at ~1 ppm; ABOVE that dose inhibition decreased (flocculation); acidification 97\%}
+}
+
+@article{gallup2005investigationsII,
+  author  = {Gallup, Darrell L. and Barcelon, E.},
+  title   = {Investigations of organic inhibitors for silica scale control from geothermal brines--{II}},
+  journal = {Geothermics},
+  year    = {2005},
+  volume  = {34},
+  number  = {6},
+  pages   = {756--771},
+  note    = {TIER: T1 | STATUS: VERIFIED — pages confirmed via multiple independent reference lists (2026-07-15). Uses SIMULATED PHILIPPINE FIELD BRINES (Na-K-Ca-Cl, pH 7.0-8.4)}
+}
+
+@article{henley1983ph,
+  author  = {Henley, R. W.},
+  title   = {{pH} and silica scaling control in geothermal field development},
+  journal = {Geothermics},
+  year    = {1983},
+  volume  = {12},
+  number  = {4},
+  pages   = {307--321},
+  note    = {TIER: T1 | STATUS: PROVISIONAL — standard reference; confirm in Zotero before citing}
+}
+
+@article{okazaki2017fiber,
+  author  = {Okazaki, Takuya and Orii, Tatsuya and Ueda, Akira and Ozawa, Akiko and Kuramitz, Hideki},
+  title   = {Fiber optic sensor for real-time sensing of silica scale formation in geothermal water},
+  journal = {Scientific Reports},
+  year    = {2017},
+  volume  = {7},
+  doi     = {10.1038/s41598-017-03530-1},
+  note    = {TIER: T1 | STATUS: VERIFIED (PMC5469775, DOI + full author list, 2026-07-14). Field test at Sumikawa, 980 mg/L SiO2, 93 C; demonstrated inhibitor-effect detection}
+}
+
+@article{energies2024overview,
+  author  = {{[authors to confirm]}},
+  title   = {An overview of silica scaling reduction technologies in the geothermal market},
+  journal = {Energies},
+  year    = {2024},
+  volume  = {17},
+  number  = {19},
+  pages   = {4825},
+  note    = {TIER: T1 | STATUS: VERIFIED venue/vol/article-no (MDPI URL 1996-1073/17/19/4825); AUTHORS UNRESOLVED — complete in Zotero}
+}
+
+@inproceedings{brown2011thermodynamics,
+  author    = {Brown, Kevin},
+  title     = {Thermodynamics and kinetics of silica scaling},
+  booktitle = {Proceedings, International Workshop on Mineral Scaling},
+  address   = {Manila, Philippines},
+  year      = {2011},
+  note      = {TIER: T2 | STATUS: VERIFIED existence via independent citation list; retrieve PDF}
+}
+
+% ----------------------------------------------------------------------------
+% THREAD 3 — Hybrid / physics-informed soft sensors
+% ----------------------------------------------------------------------------
+
+@article{vonstosch2014hybrid,
+  author  = {von Stosch, Moritz and Oliveira, Rui and Peres, Joana and Feyo de Azevedo, Sebasti{\~a}o},
+  title   = {Hybrid semi-parametric modeling in process systems engineering: Past, present and future},
+  journal = {Computers \& Chemical Engineering},
+  year    = {2014},
+  volume  = {60},
+  pages   = {86--101},
+  doi     = {10.1016/j.compchemeng.2013.08.008},
+  note    = {TIER: T1 | STATUS: VERIFIED (DOI confirmed in two independent ref lists, 2026-07-14)}
+}
+
+@article{psichogios1992hybrid,
+  author  = {Psichogios, Dimitris C. and Ungar, Lyle H.},
+  title   = {A hybrid neural network--first principles approach to process modeling},
+  journal = {AIChE Journal},
+  year    = {1992},
+  volume  = {38},
+  number  = {10},
+  pages   = {1499--1511},
+  doi     = {10.1002/aic.690381003},
+  note    = {TIER: T1 | STATUS: VERIFIED (Wiley, 2026-07-15)}
+}
+
+@article{thompson1994modeling,
+  author  = {Thompson, Michael L. and Kramer, Mark A.},
+  title   = {Modeling chemical processes using prior knowledge and neural networks},
+  journal = {AIChE Journal},
+  year    = {1994},
+  volume  = {40},
+  number  = {8},
+  pages   = {1328--1340},
+  doi     = {10.1002/aic.690400806},
+  note    = {TIER: T1 | STATUS: VERIFIED (DOI confirmed via independent ref list, 2026-07-14)}
+}
+
+@article{kadlec2009data,
+  author  = {Kadlec, Petr and Gabrys, Bogdan and Strandt, Sibylle},
+  title   = {Data-driven soft sensors in the process industry},
+  journal = {Computers \& Chemical Engineering},
+  year    = {2009},
+  volume  = {33},
+  number  = {4},
+  pages   = {795--814},
+  note    = {TIER: T1 | STATUS: VERIFIED (BURO repository + multiple ref lists, 2026-07-14)}
+}
+
+@article{jiang2020review,
+  author  = {Jiang, Yuchen and Yin, Shen and Dong, Jingwei and Kaynak, Okyay},
+  title   = {A review on soft sensors for monitoring, control, and optimization of industrial processes},
+  journal = {IEEE Sensors Journal},
+  year    = {2021},
+  volume  = {21},
+  number  = {11},
+  pages   = {12868--12881},
+  note    = {TIER: T1 | STATUS: VERIFIED vol/pages via independent ref list; year listed as 2020 online/2021 issue — resolve in Zotero}
+}
+
+@article{karniadakis2021physics,
+  author  = {Karniadakis, George Em and Kevrekidis, Ioannis G. and Lu, Lu and Perdikaris, Paris and Wang, Sifan and Yang, Liu},
+  title   = {Physics-informed machine learning},
+  journal = {Nature Reviews Physics},
+  year    = {2021},
+  volume  = {3},
+  number  = {6},
+  pages   = {422--440},
+  doi     = {10.1038/s42254-021-00314-5},
+  note    = {TIER: T1 | STATUS: VERIFIED (2026-07-15)}
+}
+
+@inproceedings{juhri2024sgw,
+  author    = {Juhri, Saefudin and Yonezu, Kotaro and Watanabe, Eiki and Mori, Koichiro and Sato, Shogo and Nurpratama, M. Istiawan and Wibowo, Haryo Edi and Harijoko, Agung and Yokoyama, Takushi},
+  title     = {Revisiting the kinetic of polymerization of silicic acid: {AI}-assisted prediction of polymerization and adsorption behavior of silicic acid},
+  booktitle = {Proceedings, 49th Workshop on Geothermal Reservoir Engineering, Stanford University},
+  number    = {SGP-TR-227},
+  address   = {Stanford, California},
+  year      = {2024},
+  url       = {https://pangea.stanford.edu/ERE/pdf/IGAstandard/SGW/2024/Juhri.pdf},
+  note      = {TIER: T2 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-14, in /literature). Closest ML prior art. Supervised ML on Japanese GPP onsite data; \%RMSE 2.7-15.7; Fe-T identified as dominant contributor to polymerization/adsorption rates. Conclusions state the endpoint is an AI system for PREDICTION of deposition rate — no control, no optimization, no uncertainty treatment. Gap dimensions G4/G6/G7 remain open}
+}
+
+@misc{juhri_followup_ml,
+  author       = {Juhri, Saefudin and {co-authors}},
+  title        = {Application of machine-learning for the prediction of formation rate of silica scale from geothermal water},
+  year         = {2024},
+  howpublished = {ResearchGate publication 390756041},
+  note         = {TIER: T2 (venue TBD) | STATUS: PROVISIONAL — DISTINCT from juhri2024sgw (plate-immersion formation-rate target, \%RRMSE ~15 at 5 h). Locate venue (likely SGW 2025 or journal) before citing; still open-loop prediction}
+}
+
+
+@article{juhri2023dieng,
+  author  = {Juhri, Saefudin and Yonezu, Kotaro and Harijoko, Agung and Nurpratama, M. Istiawan and Yokoyama, Takushi},
+  title   = {Diverse scale deposition in response to the change in chemical properties of geothermal water at the {Dieng} geothermal power plant, {Indonesia}},
+  journal = {Geothermics},
+  year    = {2023},
+  volume  = {111},
+  pages   = {102717},
+  note    = {TIER: T1 | STATUS: VERIFIED via primary-PDF reference list (2026-07-14); confirm DOI in Zotero}
+}
+
+@article{juhri2022hatchobaru,
+  author  = {Juhri, Saefudin and Yonezu, Kotaro and Inoue, H. and Kiyota, Y. and Ohshima, S. and Uemura, H. and Uchiyama, N. and Ueda, Akira and Yokoyama, Takushi},
+  title   = {Precipitation behavior of iron and silicic acid when mixing acidic and weakly alkaline geothermal waters at the {Hatchobaru} geothermal power plant, {Oita}, {Japan}},
+  journal = {Geothermics},
+  year    = {2022},
+  volume  = {104},
+  pages   = {102470},
+  note    = {TIER: T1 | STATUS: VERIFIED via primary-PDF reference list (2026-07-14); confirm DOI in Zotero. Fe-silica interaction — feature-engineering input for the ML residual}
+}
+
+% ----------------------------------------------------------------------------
+% THREAD 4 — RTO / (N)MPC with economic objectives
+% ----------------------------------------------------------------------------
+
+@article{ellis2014tutorial,
+  author  = {Ellis, Matthew and Durand, Helen and Christofides, Panagiotis D.},
+  title   = {A tutorial review of economic model predictive control methods},
+  journal = {Journal of Process Control},
+  year    = {2014},
+  volume  = {24},
+  number  = {8},
+  pages   = {1156--1178},
+  doi     = {10.1016/j.jprocont.2014.03.010},
+  note    = {TIER: T1 | STATUS: VERIFIED (publisher page + DOI, 2026-07-14). Target-journal anchor citation}
+}
+
+@article{darby2011rto,
+  author  = {Darby, Mark L. and Nikolaou, Michael and Jones, James and Nicholson, Doug},
+  title   = {{RTO}: An overview and assessment of current practice},
+  journal = {Journal of Process Control},
+  year    = {2011},
+  volume  = {21},
+  number  = {6},
+  pages   = {874--884},
+  note    = {TIER: T1 | STATUS: VERIFIED vol/pages via multiple independent reference lists (2026-07-15); add DOI in Zotero if desired}
+}
+
+@article{marchetti2009modifier,
+  author  = {Marchetti, Alejandro and Chachuat, Beno{\^i}t and Bonvin, Dominique},
+  title   = {Modifier-adaptation methodology for real-time optimization},
+  journal = {Industrial \& Engineering Chemistry Research},
+  year    = {2009},
+  volume  = {48},
+  number  = {13},
+  pages   = {6022--6033},
+  doi     = {10.1021/ie801352x},
+  note    = {TIER: T1 | STATUS: VERIFIED (ACS, 2026-07-15)}
+}
+
+@inproceedings{rawlings2012fundamentals,
+  author    = {Rawlings, James B. and Angeli, David and Bates, Cuyler N.},
+  title     = {Fundamentals of economic model predictive control},
+  booktitle = {Proceedings of the 51st IEEE Conference on Decision and Control},
+  year      = {2012},
+  pages     = {3851--3861},
+  note      = {TIER: T2 | STATUS: VERIFIED (pages via independent ref list, 2026-07-14)}
+}
+
+% ----------------------------------------------------------------------------
+% THREAD 5 — Philippine geothermal operation, brine chemistry, reinjection
+% ----------------------------------------------------------------------------
+
+@inproceedings{fronda2020country,
+  author    = {Fronda, Ariel D. and Lazaro, Vanessa S. and Halcon, Rainier M. and Reyes, Rizabigail G.},
+  title     = {Geothermal energy development: The {Philippines} country update},
+  booktitle = {Proceedings World Geothermal Congress 2020+1},
+  address   = {Reykjavik},
+  year      = {2020},
+  url       = {https://www.worldgeothermal.org/pdf/IGAstandard/WGC/2020/01065.pdf},
+  note      = {TIER: T2 | STATUS: VERIFIED (full PDF located, 2026-07-14). Authoritative installed-capacity and field inventory}
+}
+
+@article{sugiaman2004geochemical,
+  author  = {Sugiaman, F. and Sunio, E. and Molling, P. and Stimac, J.},
+  title   = {Geochemical response to production of the {Tiwi} geothermal field, {Philippines}},
+  journal = {Geothermics},
+  year    = {2004},
+  volume  = {33},
+  pages   = {57--86},
+  note    = {TIER: T1 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-14, in /literature). Table 1 endmember compositions transcribed into src/brine_speciation.py — the T1 uncertainty envelope for G7}
+}
+
+@inproceedings{see2008silica,
+  author    = {See, F. S.},
+  title     = {Silica inhibitor hot injection test at {BacMan-II} Geothermal Production Field, {Philippines}},
+  booktitle = {Proceedings of the 29th PNOC-EDC Geothermal Conference},
+  address   = {Makati City, Philippines},
+  pages     = {143--149},
+  year      = {2008},
+  note      = {TIER: T2 | STATUS: SUPERSEDED for citation by see2010wgc (WGC version in /literature). Keep for completeness}
+}
+
+@inproceedings{siega2005calcite,
+  author    = {Siega, F. L. and Herras, E. B. and Bu{\~n}ing, B. C.},
+  title     = {Calcite scale inhibition: The case of {Mahanagdong} wells in {Leyte} Geothermal Production Field, {Philippines}},
+  booktitle = {Proceedings World Geothermal Congress 2005},
+  address   = {Antalya, Turkey},
+  year      = {2005},
+  note      = {TIER: T2 | STATUS: VERIFIED citation details via EDC review paper. CALCITE (out of model scope) — context only for PH inhibitor-dosing practice}
+}
+
+@inproceedings{kobayashi2024mahanagdong,
+  author    = {Kobayashi, {[first author, co-authors to confirm]}},
+  title     = {{[Mahanagdong reservoir response to reinjection management — exact title to confirm]}},
+  booktitle = {Proceedings, 49th Workshop on Geothermal Reservoir Engineering, Stanford University},
+  year      = {2024},
+  url       = {https://pangea.stanford.edu/ERE/db/GeoConf/papers/SGW/2024/Kobayashi.pdf},
+  note      = {TIER: T2 | STATUS: PROVISIONAL — PDF located; complete author list/title from PDF. Documents reinjection-management/scaling trade-off at Mahanagdong (11 MW loss, wellbore scaling after infield-injection termination)}
+}
+
+@misc{thinkgeoenergy2019lowtemp,
+  author       = {{ThinkGeoEnergy}},
+  title        = {Low-temperature geothermal resources an untapped potential for the {Philippines}},
+  howpublished = {\url{https://www.thinkgeoenergy.com/low-temperature-geothermal-resources-an-untapped-potential-for-the-philippines/}},
+  year         = {2019},
+  note         = {TIER: T3 — MOTIVATION ONLY | STATUS: VERIFIED. Source of the Bacman 400 kg/s @ 150 C reinjection figure (reporting an EDC presentation by R. de Guzman). NEVER a model parameter or validation target}
+}
+
+@misc{thinkgeoenergy2021turboden,
+  author       = {{ThinkGeoEnergy}},
+  title        = {Brine recovery solution at {Bacman} geothermal plant, {Philippines}},
+  howpublished = {\url{https://www.thinkgeoenergy.com/brine-recovery-solution-at-bacman-geothermal-plant-philippines/}},
+  year         = {2021},
+  note         = {TIER: T3 — MOTIVATION ONLY | STATUS: VERIFIED. EDC/Turboden 29 MW gross (25 MW net) ORC brine-recovery plant at Palayan Bayan with pH-mod for silica control — real-world anchor for the binary-MW opportunity metric}
+}
+
+@misc{thermochem_silica,
+  author       = {{Thermochem, Inc.}},
+  title        = {Silica scale testing and control experience},
+  howpublished = {\url{http://www.thermochem.com/wp-content/uploads/2020/10/Silica-Scale-Testing-and-Control-Experience.pdf}},
+  year         = {2020},
+  note         = {TIER: T3 — MOTIVATION ONLY | STATUS: VERIFIED. Vendor white paper incl. pH-mod design for the Bacman binary bottoming cycle and Unit 9 dual-flash pH-mod pilot}
+}
+
+% ----------------------------------------------------------------------------
+% NEAREST-NEIGHBOR PRIOR ART — prediction/optimization tooling to position against
+% ----------------------------------------------------------------------------
+
+@article{moller1998computer,
+  author  = {M{\o}ller, Nancy and Greenberg, Jerry P. and Weare, John H.},
+  title   = {Computer modeling for geothermal systems: Predicting carbonate and silica scale formation, {CO$_2$} breakout and {H$_2$S} exchange},
+  journal = {Transport in Porous Media},
+  year    = {1998},
+  doi     = {10.1023/A:1006501927827},
+  note    = {TIER: T1 | STATUS: VERIFIED DOI (SpringerLink); author list/vol/pages PROVISIONAL. Pitzer-based equilibrium scale prediction — no kinetics-to-control coupling}
+}
+
+@article{buster2021gooml,
+  author  = {Buster, Grant and {et al.}},
+  title   = {A new modeling framework for geothermal operational optimization with machine learning ({GOOML})},
+  journal = {Energies},
+  year    = {2021},
+  volume  = {14},
+  number  = {20},
+  note    = {TIER: T1 | STATUS: VERIFIED venue/vol via independent ref list; article no./author list PROVISIONAL. ML steamfield optimization — not scaling-specific, no first-principles chemistry core}
+}
+
+@article{digitaltwin2024silica,
+  author  = {{[authors to confirm]}},
+  title   = {Towards digital twin and augmented reality modelling to mitigate silica scaling in geothermal plants},
+  journal = {SSRG International Journal of Mechanical Engineering},
+  year    = {2024},
+  note    = {TIER: T2 | STATUS: PROVISIONAL — article page located (internationaljournalssrg.org IJME id 475); complete details in Zotero. PLC-based pH monitoring/control of synthetic geofluid + DT/AR/IIoT layer — monitoring-centric, no hybrid kinetic soft sensor, no economic RTO}
+}
+
+@article{polii2013model,
+  author  = {Polii, J. H. and Abdurrachim},
+  title   = {Model development of silica scaling prediction on brine flow pipe},
+  year    = {2013},
+  note    = {TIER: T2 | STATUS: PROVISIONAL — Proc. 13th Indonesia Int. Geothermal Convention 2013; open-loop pipe-deposition prediction, no control}
+}
+
+% ----------------------------------------------------------------------------
+% SOFTWARE / METHODS TOOLING (cite in Methodology)
+% ----------------------------------------------------------------------------
+
+@techreport{parkhurst2013phreeqc,
+  author      = {Parkhurst, David L. and Appelo, C. A. J.},
+  title       = {Description of input and examples for {PHREEQC} version 3 --- A computer program for speciation, batch-reaction, one-dimensional transport, and inverse geochemical calculations},
+  institution = {U.S. Geological Survey},
+  type        = {Techniques and Methods},
+  number      = {6-A43},
+  year        = {2013},
+  note        = {TIER: T2 | STATUS: PROVISIONAL — standard USGS reference; confirm in Zotero}
+}
+
+@article{beal2018gekko,
+  author  = {Beal, Logan D. R. and Hill, Daniel C. and Martin, R. Abraham and Hedengren, John D.},
+  title   = {{GEKKO} optimization suite},
+  journal = {Processes},
+  year    = {2018},
+  volume  = {6},
+  number  = {8},
+  pages   = {106},
+  note    = {TIER: T1 | STATUS: PROVISIONAL — standard reference, DOI 10.3390/pr6080106; confirm in Zotero}
+}
+
+@article{fiedler2023dompc,
+  author  = {Fiedler, Felix and Karg, Benjamin and L{\"u}ken, Lukas and Brandner, Dean and Heinlein, Moritz and Brabender, Felix and Lucia, Sergio},
+  title   = {do-mpc: Towards {FAIR} nonlinear and robust model predictive control},
+  journal = {Control Engineering Practice},
+  year    = {2023},
+  volume  = {140},
+  pages   = {105676},
+  note    = {TIER: T1 | STATUS: PROVISIONAL — confirm details in Zotero}
+}
+
+@article{herman2017salib,
+  author  = {Herman, Jon and Usher, Will},
+  title   = {{SALib}: An open-source {Python} library for sensitivity analysis},
+  journal = {Journal of Open Source Software},
+  year    = {2017},
+  volume  = {2},
+  number  = {9},
+  pages   = {97},
+  note    = {TIER: T1 | STATUS: PROVISIONAL — standard reference, DOI 10.21105/joss.00097; confirm in Zotero}
+}
+
+@inproceedings{ke2017lightgbm,
+  author    = {Ke, Guolin and Meng, Qi and Finley, Thomas and Wang, Taifeng and Chen, Wei and Ma, Weidong and Ye, Qiwei and Liu, Tie-Yan},
+  title     = {{LightGBM}: A highly efficient gradient boosting decision tree},
+  booktitle = {Advances in Neural Information Processing Systems 30},
+  year      = {2017},
+  note      = {TIER: T2 | STATUS: PROVISIONAL — standard reference; confirm in Zotero}
+}
+
+% ----------------------------------------------------------------------------
+% ADDED 2026-07-15 — PH field primaries (all PDFs in /literature) + Scott items
+% ----------------------------------------------------------------------------
+
+@inproceedings{see2010wgc,
+  author    = {See, Fidel S.},
+  title     = {Silica inhibitor hot injection test at {Bacman} Geothermal Production Field, {Botong}, {Philippines}},
+  booktitle = {Proceedings World Geothermal Congress 2010},
+  address   = {Bali, Indonesia},
+  year      = {2010},
+  note      = {TIER: T2 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-15, /literature/2722_SiO2_FSS.pdf). The WGC version of the BacMan-II inhibitor field test — resolves the see2008silica acquisition task. Direct PH silica-inhibitor field trial at the archetype field}
+}
+
+@inproceedings{remoroza2008ph,
+  author    = {Remoroza, A. I. and Mejorada, A. V. and Salazar, A. T. N.},
+  title     = {Field testing of {pH} modification silica inhibition with chemical corrosion inhibition},
+  booktitle = {Proceedings, 33rd Workshop on Geothermal Reservoir Engineering, Stanford University},
+  number    = {SGP-TR-185},
+  year      = {2008},
+  note      = {TIER: T2 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-15, /literature/remoroza.pdf). EDC field test of the pH-mod lever at a PH field — grounds the second manipulated variable in PH practice}
+}
+
+@inproceedings{espartinez2015bacman,
+  author    = {Espartinez, Christine Marie R. and See, Fidel S.},
+  title     = {The {BacMan} geothermal field, {Philippines}: Geochemical changes and challenges after twenty years of operation},
+  booktitle = {Proceedings World Geothermal Congress 2015},
+  address   = {Melbourne, Australia},
+  year      = {2015},
+  note      = {TIER: T2 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-15, /literature/24003.pdf). Twenty-year Bacman geochemical evolution — candidate Bacman-specific chemistry to cross-check the Tiwi envelope (P5/P6); transcribe any brine tables under the CSV protocol}
+}
+
+@inproceedings{baltazar2014grc,
+  author    = {Baltazar, Almario D., Jr. and See, Fidel S. and de Guzman, Richard C. and Solis, R. P. and Salonga, Noel D. and Patel, Suresh and Lee, Leon and Ooi, Anders},
+  title     = {Geothermal silica scale inhibition and control using phosphino carboxylic acid copolymer in {Bacon-Manito} Geothermal Business Unit},
+  booktitle = {Geothermal Resources Council Transactions},
+  year      = {2014},
+  note      = {TIER: T2 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-15, /literature/GRCPaper2014_2.pdf); volume/pages to complete from PDF. EDC+BWA inhibitor field program at Bacman with NAMED chemistry (phosphino carboxylic acid copolymer, cf. Gallup 2002 family) — documents the EMPIRICAL-DOSING BASELINE as T2 field practice; extract dose levels for the controller benchmark}
+}
+
+@article{marchetti2010dual,
+  author  = {Marchetti, Alejandro and Chachuat, Beno{\^i}t and Bonvin, Dominique},
+  title   = {A dual modifier-adaptation approach for real-time optimization},
+  journal = {Journal of Process Control},
+  year    = {2010},
+  volume  = {20},
+  number  = {9},
+  pages   = {1027--1037},
+  doi     = {10.1016/j.jprocont.2010.06.006},
+  note    = {TIER: T1 | STATUS: VERIFIED (2026-07-15). JPC-native MA reference — target-journal anchor for the G7 mechanism}
+}
+
+@article{scott2024corrigendum,
+  author  = {Scott, Samuel and Galeczka, Iwona M. and Gunnarsson, Ingvi and Arn{\'o}rsson, Stef{\'a}n and Stef{\'a}nsson, Andri},
+  title   = {Corrigendum to ``Silica polymerization and nanocolloid nucleation and growth kinetics in aqueous solutions''},
+  journal = {Geochimica et Cosmochimica Acta},
+  year    = {2026},
+  doi     = {10.1016/j.gca.2026.06.027},
+  note    = {TIER: T1 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-15, /literature/scott2024_corrigendum.pdf; article in press — no vol/pages yet, cite by DOI). Corrects a parameterization error in scott2024silica — cite BOTH; corrected parameters implemented in reference/scott2024_model_author_provided.py per the author}
+}

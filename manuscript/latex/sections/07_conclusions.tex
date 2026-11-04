@@ -1,0 +1,37 @@
+\section{Conclusions}\label{sec:conclusions}
+
+We posed geothermal silica scaling as what it is for a control
+engineer: a hard-constrained economic optimization run against a model
+known to be structurally wrong, with the size of the wrongness measured
+at a sixfold median gap against independent modern kinetics rather than
+assumed. The architecture answers mismatch with two coupled mechanisms,
+a hybrid soft sensor whose learned correction is weighted by its own
+leave-one-out credibility, and a vertex-robust economic real-time
+optimizer that consumes both the correction and its uncertainty as a
+constraint back-off. Under sparse daily labels the sensor cuts
+estimation error by 40\% against its physics prior and by 48\% against
+a pure-data baseline. In closed loop it is the only tested policy that
+remains essentially free of constraint violations in both regimes:
+benign mismatch, at $+33\%$ power uplift with zero violation days on
+six of six plants, and a stress set at the measured sixfold gap, at
+0.50 post-warm-up violation days against 17.2 for the robust open
+loop. Two pre-registered failures shaped the design and are reported
+as results. Zero-shot residual transfer harms, which makes earned
+credibility the deployment interlock; and scalar modifier adaptation
+cannot stabilize a multiplicative error on a quartic constraint, which
+makes state-dependent correction necessary rather than merely
+preferable. Every physics component, and the sensing pattern itself,
+was validated out-of-sample. That exercise returned two findings of
+independent geochemical interest, that single-curve decay is second
+order against the classical fourth-order peak-rate law and that the
+2000 solubility correlation and the 2024 endpoints mutually validate
+at a median of $1.05\times$, together with one transferable design
+principle: identifiability precedes correction.
+
+\section*{Data and code availability}
+The complete repository, comprising the primary-data transcriptions
+with integrity checks, all models, experiments and figures, regenerates
+every result through a single gate script (94 automated checks across
+13 modules, deterministic seeds throughout). An archival release is
+planned upon acceptance. A third-party author-provided reference script
+is excluded pending its author's permission.

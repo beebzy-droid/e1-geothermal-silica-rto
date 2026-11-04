@@ -1,0 +1,25 @@
+Scaling processes couple strongly nonlinear kinetics to hard operational
+constraints, and the models available for them are structurally wrong in
+ways that matter. In this work the wrongness is measured rather than
+assumed: a classical fitted rate law mispredicts independent modern
+kinetic data by a factor of six at the median. We present a control
+architecture that treats such mismatch as a first-class design object.
+A hybrid soft sensor combines a physics core with a learned residual
+whose weight is set by its own leave-one-out credibility, so the
+correction fades back to the prior whenever the data has not earned it.
+A vertex-robust economic real-time optimizer then consumes both the
+correction and its uncertainty, the latter as a multiplicative
+constraint back-off. On a synthetic brine-line plant grounded in the
+primary-literature chemistry of Philippine liquid-dominated geothermal
+fields, the sensor reduces estimation error by 40\% relative to physics
+alone and 48\% relative to a purely data-driven model under sparse
+daily labels. In closed loop it is the only tested policy that remains
+essentially violation-free in two regimes: benign random mismatch
+(+33\% power uplift, zero violation days) and an adverse stress set at
+the measured sixfold kinetic gap (0.5 post-warm-up violation days
+against 17.2 for the robust open loop). Two pre-registered failures,
+of zero-shot residual transfer and of scalar modifier adaptation
+against multiplicative mismatch, motivated the design and are reported
+as results. Every kinetic, solubility and sensing component is
+validated out-of-sample against an independent 2024 experimental
+dataset.

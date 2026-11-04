@@ -1,0 +1,125 @@
+\section{Architecture}\label{sec:arch}
+
+\subsection{Synthetic-truth plant}\label{sec:plant}
+
+Performance claims for an estimator or a controller mean little unless
+the truth they are tested against differs from the model in ways the
+designer did not choose to be easy. We therefore construct a synthetic
+plant whose physics is a structurally perturbed instance of the
+Section~\ref{sec:benchmark} core, with every deviation parameterized
+and documented. The true polymerization rate is
+\begin{equation}\label{eq:truth}
+r_{\mathrm{true}} \;=\; f_u(u)\, e^{B(T)}\, k(T)\, s^{\,n},
+\qquad s = C - C_e(T)\,\beta_e ,
+\end{equation}
+gated by an induction clock. Here $k(T)$ and $C_e(T)$ are the
+literature-fitted core; $B(T)$ is a smooth log-normal bias field drawn
+per plant on the seven kinetic isotherm nodes ($\sigma = 0.35$); the
+reaction order is drawn as $n \sim \mathcal{N}(4, 0.15)$, clipped to
+$[3.6, 4.4]$ in keeping with the ``approximately fourth order'' hedge
+of the source data; $\beta_e \sim \mathcal{N}(1, 0.03)$ perturbs
+solubility; and $f_u$ is a per-plant perturbed instance of the
+non-monotonic dose--response family anchored to field
+observations~\citep{gallup2002investigations}, with nominal suppression
+of about half near 1~ppm and a mild reversal on overdose. The induction
+period is fitted from the primary kinetic dataset itself,
+$\log_{10} P = a + b \log_{10} s + cT$ with $b = -4.31$ and
+$r^2 = 0.88$, a relation that independently reproduces the source
+publication's own graphical correlation. The truth maintains a
+supersaturation-exposure clock that the model core deliberately lacks.
+
+Brine chemistry follows a mean-reverting Ornstein--Uhlenbeck
+fluctuation of endmember mixture weights around the nominal operating
+composition on the Tiwi envelope~\citep{sugiaman2004geochemical}, with
+a bounded flash-fraction perturbation. One modeling correction deserves
+open mention. An earlier revision used a pure simplex random walk,
+which drifts toward the mixture centroid and quietly diluted the brine
+from 799 to 579~mg/kg over ten days, relaxing the constraint for every
+controller in the study. The mean-reverting form restores stationarity
+(drift below 1.3\% over ten days), and stationarity is now one of the
+repository's automated checks. The measurement layer is deliberately
+shift-realistic: silica grab samples every 8~h at 5\% relative noise,
+continuous line temperature at $\sigma = 0.3\,^{\circ}$C, and a single
+noisy daily observation of the trailing-24-h mean rate (10\% relative
+noise, standing in for a coupon or turbidity proxy). A fourteen-day
+episode thus provides 42 concentration samples and 14 rate labels
+against 2{,}016 hidden truth values. This is the sparse-supervision
+regime the architecture is built for. A step-wise simulation interface
+reproduces the batch simulator's truth path exactly, verified to
+machine precision, so that closed-loop experiments can let the
+controller decide each day from what it has actually observed.
+
+\subsection{Credibility-weighted hybrid soft sensor}\label{sec:sensor}
+
+The sensed quantity is the trailing-24-h mean polymerization rate: the
+quantity that accumulates scale, and the one the optimization layer
+constrains. The sensor is a parallel
+hybrid~\citep{thompson1994modeling,vonstosch2014hybrid},
+\begin{equation}\label{eq:sensor}
+\hat r \;=\; \operatorname{expm1}\!\big(\log(1{+}r_{\mathrm{core}})
+\;+\; \lambda\, g_{\theta}(x)\big)_{+},
+\end{equation}
+in which $r_{\mathrm{core}}$ is the trailing mean of the kinetic core
+combined with the nominal literature dose--response, and $g_{\theta}$
+is a gradient-boosted residual~\citep{ke2017lightgbm} in
+$\log(1{+}\cdot)$ space over causal trailing-window aggregates of
+observables only. A code-level guard raises an error if any truth-side
+variable reaches the feature set. Training is per plant, on that
+plant's own sparse daily labels, under strict temporal splits, which is
+the standard soft-sensor protocol~\citep{kadlec2009data}.
+
+The protocol is itself a result. Our first evaluation asked the
+residual to generalize zero-shot to unseen truth realizations, and the
+hybrid lost to both a pure-physics and a pure-data baseline. The
+diagnosis is structural rather than statistical. Per-plant mismatch
+draws are unpredictable before any data from that plant exists, so a
+zero-shot split tests a claim no soft sensor makes; a soft sensor is
+trained on its plant's history and predicts forward in time, where the
+plant's own bias is identifiable. We report this negative result
+because it motivates the two protective mechanisms that follow. The
+residual weight $\lambda$ in Eq.~\eqref{eq:sensor} is set by
+leave-one-out (LOO) credibility on the training labels,
+\begin{equation}\label{eq:lambda}
+\lambda^{\ast} = \operatorname{clip}_{[0,1]}
+\frac{\langle e, \tilde r\rangle}{\langle \tilde r, \tilde r\rangle},
+\qquad \lambda = 0 \ \text{unless the LOO SSE improves by at least } 15\%,
+\end{equation}
+where $e$ collects the residual targets and $\tilde r$ their LOO
+predictions. The correction is used only to the extent that it
+demonstrates out-of-sample signal, and the hybrid falls back gracefully
+to its physics prior as labels become few or uninformative. The same
+LOO computation yields the residual's prediction-error standard
+deviation $\sigma_{\mathrm{LOO}}$, which is exported to the
+optimization layer as the sensor's own statement of uncertainty.
+
+\subsection{Uncertainty-consuming robust economic RTO}\label{sec:rto}
+
+Following the two-layer rationale of steady-state real-time
+optimization~\citep{darby2011rto}, the decision variables are the
+reinjection temperature set-point and the inhibitor dose, $(T_r, u)$,
+refreshed daily. The objective is heat-recovery revenue minus inhibitor
+cost, with every economic coefficient declared as a scenario parameter
+(peso-denominated; Section~\ref{sec:phcontext}). The scaling constraint
+is enforced on every vertex of the brine-chemistry envelope at the
+adverse flash bound,
+\begin{equation}\label{eq:rto}
+\max_{T_r,\,u}\; J(T_r, u)
+\quad \text{s.t.} \quad
+\hat r_v(T_r, u)\, e^{\kappa \sigma_{\mathrm{LOO}}} + \varepsilon
+\;\le\; r_{\max} \quad \forall v \in \mathcal{V},
+\end{equation}
+and the problem is solved by dense grid search. The choice is
+deliberate: on a bounded two-dimensional decision space the grid is
+global, deterministic and auditable by any reader, and the vectorized
+implementation is consistency-checked against the reference solver at
+start-up. Feedback enters in two forms that the results deliberately
+contrast. A scalar modifier-adaptation bias $\varepsilon$, updated from
+daily innovations~\citep{marchetti2009modifier,marchetti2010dual}, is
+retained as the natural feedback baseline. In the proposed coupling,
+the trained sensor of Section~\ref{sec:sensor} becomes the constraint
+model $\hat r_v$ itself, queried at steady state across the decision
+grid, its correction shrunk by $\lambda$ and backed off by its own
+$\kappa\sigma_{\mathrm{LOO}}$ with $\kappa = 1$. During warm-up, before
+the sensor has earned credibility, feedback may only tighten the
+constraint ($\varepsilon \ge 0$). The justification for that rule is
+empirical and appears in Section~\ref{sec:stress}.

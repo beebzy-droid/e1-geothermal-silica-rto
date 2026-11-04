@@ -1,0 +1,27 @@
+\section{Data transcription and integrity protocol}\label{app:protocol}
+Primary numerical sources enter the repository only through a
+transcription protocol: tables are transcribed to CSV against the
+publisher's text layer, validated against printed derived quantities
+where the source provides them (for the kinetic dataset of
+\citet{rothbaum1979rohde}, the printed $R \cdot P^{1.5}$ checksum column
+validates 33 of 33 retained rows; one flagged row is excluded), and
+tagged with an evidence tier: T1 for peer-reviewed primary sources, T2
+for conference or institutional material, and T3 for trade press, which
+may motivate scenario scale only and is never fitted, a rule enforced
+in code. Machine-readable sources
+replace manual transcription with automated parser integrity checks
+(Section~\ref{sec:validation}).
+
+\section{Reproducibility}\label{app:repro}
+A single gate script executes the self-checks of all twelve modules
+(94 checks at the time of writing) and refuses a green status unless
+every check passes; the repository convention is that no commit is made
+against a red gate, and all figures and result tables regenerate from
+source and raw transcriptions. All stochastic components are seeded,
+including the Sobol sampler, whose default scrambled quasi-random
+sequence is pinned for run-to-run reproducibility. The Python
+environment is pinned in \texttt{requirements.txt}; principal
+dependencies are NumPy/SciPy/pandas, LightGBM~\citep{ke2017lightgbm},
+SALib~\citep{herman2017salib}, and PHREEQC via
+phreeqpython~\citep{parkhurst2013phreeqc} for the (deferred) speciation
+layer.
