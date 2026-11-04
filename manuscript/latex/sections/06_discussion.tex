@@ -1,0 +1,55 @@
+\section{Discussion and limitations}\label{sec:discussion}
+
+\paragraph{Evaluation posture.} The closed-loop results are in silico.
+The plant is synthetic, though every physical ingredient, from
+solubility and kinetics to the brine envelope and the actuator family,
+is grounded in primary literature and, wherever independent data
+exists, validated out-of-sample component by component
+(Section~\ref{sec:validation}). We regard component-wise real-data
+validation combined with a parameterized-mismatch closed loop as the
+honest intermediate between simulation-only studies and a field trial.
+A field pilot is the natural next step, and it would require exactly
+the sparse instrumentation this architecture is designed around.
+
+\paragraph{Constraint units.} The scaling constraint is expressed as a
+polymerization (monomer-depletion) rate rather than a wall-deposition
+thickness rate. The molecular-deposition treatment of
+\citet{weres1981kinetics}, transcribed under the same integrity
+protocol (its printed checkpoints reproduce, including the 3.0~kcal/mol
+effective activation energy; one internal inconsistency in its
+Eq.~[4c] is documented rather than silently repaired), closes the unit
+gap. Along the envelope where the constraint is active,
+$r_{\max} = 0.5$~g\,t$^{-1}$\,min$^{-1}$ corresponds to a Weres-implied
+molecular-deposition wall growth, a lower bound on total scale growth,
+of about 0.3~mm/yr at the optimized operating point and 0.04 to
+1.6~mm/yr across 90--175~$^{\circ}$C; the four-fold $r_{\max}$ band of
+the sensitivity study spans that calibration.
+
+\paragraph{Scenario fencing.} Trade-press figures inform scenario scale
+only. The rule is enforced mechanically in the repository, and every
+peso and megawatt headline carries an envelope range with decision
+invariance verified rather than assumed.
+
+\paragraph{Design constants.} The back-off gain is fixed at
+$\kappa = 1$. Its ablation over $\kappa \in \{0,1\}$ brackets the
+safety--harvest trade under stress, and $\sigma_{\mathrm{LOO}}$ is
+already data-adaptive. A continuous $\kappa$ sweep is the tuning study we
+would prioritize next.
+
+\paragraph{Scope boundaries.} High-pH brines require silica ionization
+corrections that are deferred here; the speciation layer exists in the
+repository but is not exercised in the loop. The identifiability
+principle of Section~\ref{sec:sensorval} is likewise a scope statement
+rather than a weakness: corrections are used only where labels can
+support them, and the architecture knows which regime it is in.
+
+\paragraph{What generalizes.} Nothing in
+Eqs.~\eqref{eq:sensor}--\eqref{eq:rto} is specific to silica. The
+pattern, a physics prior corrected only to its earned credibility and
+feeding a constraint backed off by the correction's own cross-validated
+uncertainty, applies to any hard-constrained process operated against a
+structurally wrong model: fouling, crystallization, corrosion, membrane
+scaling. Geothermal silica supplies an unusually clean and unusually
+demanding instance, with quartic constraint sensitivity, an induction
+delay, non-monotonic actuation, and a measured sixfold model-family
+gap, and that is why we offer it as a benchmark.

@@ -1,0 +1,23 @@
+name: ipis-thesis-geothermal-silica
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pandas
+  - numpy
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - jupyterlab
+  - pyarrow
+  - pip
+  - pip:
+      - lightgbm          # ML residual for the hybrid soft sensor
+      - gekko             # RTO / NMPC
+      - do-mpc            # alternative MPC formulation
+      - casadi            # do-mpc backend
+      - CoolProp          # brine/steam thermophysical properties
+      - phreeqpython      # PHREEQC bindings: aqueous speciation, silica saturation index
+      - SALib
+      - pyomo
+      - plotly

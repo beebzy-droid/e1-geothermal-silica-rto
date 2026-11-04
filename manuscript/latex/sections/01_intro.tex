@@ -1,0 +1,64 @@
+\section{Introduction}\label{sec:intro}
+
+Process models tend to be wrong precisely where constraints bind. This
+paper works through a case in which the wrongness can be put on a
+scale. The classical kinetic law for amorphous-silica polymerization,
+transcribed faithfully from its 1979 primary source, mispredicts the
+effective decay rate observed in an independent 2024 laboratory corpus
+by a factor of six at the median. Yet silica scaling must be managed
+daily and at industrial scale. In the liquid-dominated geothermal
+fields of the Philippines, which rank among the largest installed
+capacities in the world~\citep{fronda2020country}, dissolved silica
+sets the floor on reinjection temperature and therefore the ceiling on
+bottoming-cycle power. Mitigation practice at the Bacman- and
+Tiwi-type fields that motivate this study is documented and static:
+fixed inhibitor programs and manually managed reinjection
+temperatures~\citep{see2010wgc,remoroza2008ph,baltazar2014grc,%
+kobayashi2024mahanagdong}. Between a model too wrong to trust and a
+practice too static to optimize sits the control problem addressed
+here.
+
+The individual ingredients are established. Machine-learned predictors
+of geothermal scaling exist in prediction-only
+form~\citep{juhri2024sgw}. Hybrid physics--data modeling has a mature
+canon~\citep{psichogios1992hybrid,thompson1994modeling,%
+vonstosch2014hybrid,karniadakis2021physics}, soft-sensor practice under
+sparse labels is well codified~\citep{kadlec2009data}, and real-time
+optimization under plant--model mismatch has a developed theory of
+modifier adaptation~\citep{marchetti2009modifier,marchetti2010dual,%
+darby2011rto}. What has been missing, and what a constraint with
+fourth-power sensitivity punishes, is the coupling between them: an
+estimator that knows how much of its own learned correction to believe,
+and an optimizer that spends that belief as constraint margin. Two
+pre-registered negative results in this paper show that the coupling is
+not a refinement but a requirement. A residual transferred across
+plants actively harms, and a scalar bias adaptation, the natural first
+recourse, cannot stabilize a multiplicative kinetic error on a
+fourth-power constraint even while it harvests spectacular nominal
+profit.
+
+The contributions are fivefold. First, a credibility-weighted hybrid
+soft sensor whose leave-one-out shrinkage yields provable graceful
+degradation to its physics prior and doubles as the deployment safety
+interlock. Second, a vertex-robust economic real-time optimizer that
+consumes the sensor's correction together with its cross-validated
+uncertainty as a multiplicative back-off. Third, a two-regime
+closed-loop evaluation, spanning benign random mismatch and an adverse
+stress set at the measured sixfold gap, that maps a safety--harvest
+frontier on which the proposed loop is the only policy essentially free
+of violations in both regimes. Fourth, out-of-sample validation of
+every physics component and of the sensing pattern itself against the
+independent 2024 corpus, which yields a reconciliation of second-order
+decay with the classical fourth-order peak-rate law, a mutual
+solubility validation at a median of $1.05\times$, and a design
+principle we state as: identifiability precedes correction. Fifth, a
+fully specified and regenerable benchmark problem, built on
+Philippine-field chemistry, with a quartic constraint, an induction
+delay, a non-monotonic actuator and a $\times 101$ temperature lever,
+offered to the constrained-optimization community.
+
+Section~\ref{sec:benchmark} states the problem and its industrial
+context, Section~\ref{sec:arch} the architecture,
+Section~\ref{sec:results} the in-silico results,
+Section~\ref{sec:validation} the out-of-sample validation, and
+Section~\ref{sec:discussion} the limitations and what generalizes.

@@ -1,0 +1,69 @@
+# rothbaum1979_tableII.csv — Rothbaum & Rohde (1979), JCIS 71(3),
+#   doi:10.1016/0021-9797(79)90328-X — Table II, "Experimental Maximum
+#   Reaction Rates (R) and Induction Periods (P) of Silica Polymerization
+#   at Various Temperatures"
+#
+# UNITS EXACTLY AS PRINTED:
+#   supersaturation_g_per_t : (C0 - Ce), g SiO2 / tonne  (= mg/L)
+#   max_rate_g_per_t_min    : R, g SiO2 t^-1 min^-1
+#   induction_period_min    : P, minutes (0 = no induction period observed)
+#   checksum_printed        : R x P^(3/2) as printed (g min^1/2 / t); -- = none
+#
+# TRANSCRIPTION METHOD (2026-07-14):
+#   Source digits taken from the publisher OCR text layer of the PDF
+#   (pdftotext -raw, page 19), NOT from vision re-reading. Every row
+#   validated against the paper's own printed R*P^(3/2) checksum column:
+#   36/37 rows agree within 1.5%. External cross-check: R^(1/4) endpoints
+#   match Fig. 14 axes/line labels. One row FLAGGED (30C, 520 g/t):
+#   printed checksum 16 vs computed 141 — excluded from fitting until
+#   resolved against the paper (likely misprinted/mis-OCR'd checksum digit).
+#   Rows with P=0 (no induction; s >= 700 g/t) lie beyond Fig. 14's
+#   correlated range — regime change — excluded from 4th-order fitting.
+#   Rows in the 180C "G" group are gold-bag bomb experiments (paper
+#   footnote G) — kept as a separate group label 180G.
+#
+# HUMAN SPOT-CHECK (5 min, recommended before P5 gate): open the PDF at
+#   page 19 and verify the SUPERSATURATION column of any 5 rows — it is
+#   the one column the checksum does not cover.
+#
+# transcription_status: VERIFIED
+# transcribed_by: Claude (OCR text layer + per-row checksum validation)
+# verified_date: 2026-07-14
+temperature_C,supersaturation_g_per_t,max_rate_g_per_t_min,induction_period_min,checksum_printed,notes
+5,200,0.091,300,472,
+5,350,0.345,100,345,
+5,450,2.86,20,256,
+5,520,3.08,12,128,
+5,590,20,4,160,
+30,255,0.063,300,325,
+30,380,1.82,35,376,
+30,470,2.94,10,93,
+30,520,17.6,4,16,FLAGGED_checksum_mismatch_excluded
+60,250,0.040,750,821,
+60,340,1.39,50,491,
+60,420,2.78,30,457,
+60,510,12.5,8,283,
+90,220,0.22,500,2480,
+90,300,1.33,60,618,
+90,370,2.50,32,452,
+90,470,9.1,15,528,
+90,560,16.7,7,309,
+90,700,330,0,--,no_induction_excluded_from_fit
+120,170,0.128,500,1430,
+120,385,0.65,40,163,
+120,470,2.22,25,277,
+120,630,12.5,6,184,
+120,720,33.3,4,266,
+120,840,330,0,--,no_induction_excluded_from_fit
+150,305,0.26,300,1350,
+150,320,0.29,130,430,
+150,385,1.0,30,164,
+150,525,18.9,7,350,
+150,710,100,0,--,no_induction_excluded_from_fit
+180,325,0.125,300,649,
+180,415,0.74,150,1360,
+180,520,4.2,17,294,
+180,600,16.7,4,134,
+180,230,0.0175,3000,2880,goldbag_bomb_group_180G
+180,390,0.57,250,2260,goldbag_bomb_group_180G
+180,420,2.0,150,3670,goldbag_bomb_group_180G

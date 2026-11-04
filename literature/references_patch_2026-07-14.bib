@@ -1,0 +1,78 @@
+% ============================================================================
+% references_patch_2026-07-14.bib — merge into literature/references.bib
+%
+% WHY THIS PATCH EXISTS
+% 1. The Juhri SGW-2024 record you edited is WRONG if it carries the
+%    ResearchGate title. The actual SGW 2024 paper (PDF verified from
+%    /literature/Juhri.pdf front matter) has a different title; the RG
+%    abstract "Application of Machine-Learning..." is a SEPARATE follow-up
+%    work by the same group. Both entries below.
+% 2. The uploaded rothbaum1979.pdf is Rothbaum & ROHDE (1979), J. Colloid
+%    Interface Sci. — NOT the Geothermics paper provisionally entered as
+%    rothbaum1979effect. They are two different papers; both entries below.
+% 3. Status upgrades: sugiaman2004 and vandenheuvel2018 are now VERIFIED
+%    FROM PRIMARY PDF (in /literature). Update their note fields accordingly.
+% ============================================================================
+
+% --- REPLACES juhri2024ml -------------------------------------------------
+@inproceedings{juhri2024sgw,
+  author    = {Juhri, Saefudin and Yonezu, Kotaro and Watanabe, Eiki and Mori, Koichiro and Sato, Shogo and Nurpratama, M. Istiawan and Wibowo, Haryo Edi and Harijoko, Agung and Yokoyama, Takushi},
+  title     = {Revisiting the kinetic of polymerization of silicic acid: {AI}-assisted prediction of polymerization and adsorption behavior of silicic acid},
+  booktitle = {Proceedings, 49th Workshop on Geothermal Reservoir Engineering, Stanford University},
+  number    = {SGP-TR-227},
+  address   = {Stanford, California},
+  year      = {2024},
+  url       = {https://pangea.stanford.edu/ERE/pdf/IGAstandard/SGW/2024/Juhri.pdf},
+  note      = {TIER: T2 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-14, in /literature). Closest ML prior art. Supervised ML on Japanese GPP onsite data; \%RMSE 2.7-15.7; Fe-T identified as dominant contributor to polymerization/adsorption rates. Conclusions state the endpoint is an AI system for PREDICTION of deposition rate — no control, no optimization, no uncertainty treatment. Gap dimensions G4/G6/G7 remain open}
+}
+
+% --- NEW: the separate follow-up work (the RG abstract) ---------------------
+@misc{juhri_followup_ml,
+  author       = {Juhri, Saefudin and {co-authors}},
+  title        = {Application of machine-learning for the prediction of formation rate of silica scale from geothermal water},
+  year         = {2024},
+  howpublished = {ResearchGate publication 390756041},
+  note         = {TIER: T2 (venue TBD) | STATUS: PROVISIONAL — distinct from juhri2024sgw (plate-immersion formation-rate target, \%RRMSE ~15 at 5 h). Locate venue (likely SGW 2025 or journal) before citing; still open-loop prediction}
+}
+
+% --- CORRECTION: the PDF in /literature is this paper -----------------------
+@article{rothbaum1979rohde,
+  author  = {Rothbaum, H. P. and Rohde, A. G.},
+  title   = {Kinetics of silica polymerization and deposition from dilute solutions between 5 and 180{\textdegree}{C}},
+  journal = {Journal of Colloid and Interface Science},
+  year    = {1979},
+  volume  = {71},
+  number  = {3},
+  doi     = {10.1016/0021-9797(79)90328-X},
+  note    = {TIER: T1 | STATUS: VERIFIED FROM PRIMARY PDF (2026-07-14, in /literature). KEY for Limitation A: data span 5-180 degC, bracketing the 150 degC reinjection line; max polymerization rate DECREASES from 90 to 180 degC (~4th-order kinetics, induction periods) — naive Arrhenius extrapolation of <=100 degC data overpredicts. Primary kinetics source for module 3 alongside weres1981kinetics}
+}
+% Keep rothbaum1979effect (Geothermics 8(1):1-20) as a SEPARATE provisional
+% entry — different paper, still to be retrieved.
+
+% --- NEW: T1 journal papers by the Juhri group (from SGW-2024 ref list) -----
+@article{juhri2023dieng,
+  author  = {Juhri, Saefudin and Yonezu, Kotaro and Harijoko, Agung and Nurpratama, M. Istiawan and Yokoyama, Takushi},
+  title   = {Diverse scale deposition in response to the change in chemical properties of geothermal water at the {Dieng} geothermal power plant, {Indonesia}},
+  journal = {Geothermics},
+  year    = {2023},
+  volume  = {111},
+  pages   = {102717},
+  note    = {TIER: T1 | STATUS: VERIFIED via primary-PDF reference list (2026-07-14); confirm DOI in Zotero}
+}
+
+@article{juhri2022hatchobaru,
+  author  = {Juhri, Saefudin and Yonezu, Kotaro and Inoue, H. and Kiyota, Y. and Ohshima, S. and Uemura, H. and Uchiyama, N. and Ueda, Akira and Yokoyama, Takushi},
+  title   = {Precipitation behavior of iron and silicic acid when mixing acidic and weakly alkaline geothermal waters at the {Hatchobaru} geothermal power plant, {Oita}, {Japan}},
+  journal = {Geothermics},
+  year    = {2022},
+  volume  = {104},
+  pages   = {102470},
+  note    = {TIER: T1 | STATUS: VERIFIED via primary-PDF reference list (2026-07-14); confirm DOI in Zotero. Fe-silica interaction — feature-engineering input for the ML residual}
+}
+
+% --- STATUS UPGRADES (edit the note fields of the existing entries) ---------
+% sugiaman2004geochemical  -> STATUS: VERIFIED FROM PRIMARY PDF (in /literature).
+%   Table 1 endmember compositions transcribed into src/brine_speciation.py
+%   (T1 uncertainty envelope for G7).
+% vandenheuvel2018understanding -> STATUS: VERIFIED FROM PRIMARY PDF (in /literature).
+%   Priority P3/P5 validation-shaped dataset.

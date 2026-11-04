@@ -1,0 +1,62 @@
+5 November 2026
+
+To the Editors, Journal of Process Control
+
+Dear Editors,
+
+I am submitting the manuscript "A credibility-weighted hybrid soft
+sensor and uncertainty-consuming robust real-time optimization for
+silica scaling control in Philippine geothermal fields: design,
+negative results, and out-of-sample validation" for consideration as a
+full-length research paper.
+
+The paper sits squarely in this journal's scope: soft sensing under
+sparse labels, economic real-time optimization under plant-model
+mismatch, and the interaction of the two in closed loop. The modifier-
+adaptation lineage it builds on and tests against is work published by
+this journal's own community. The application, silica scaling control
+in Philippine liquid-dominated geothermal fields, supplies a constraint
+process of unusual severity: a fourth-order peak-rate law, an induction
+delay, a non-monotonic inhibitor actuator, and a temperature lever that
+multiplies the scaling rate by a factor of 101 across the decision
+range.
+
+The contribution is the coupling that current practice lacks. A hybrid
+soft sensor weights its learned residual by leave-one-out credibility,
+so the correction fades to the physics prior when data has not earned
+it, and the same computation exports the residual's uncertainty. A
+vertex-robust economic optimizer then consumes both, the uncertainty as
+a multiplicative constraint back-off. The mismatch this addresses is
+measured rather than assumed: the transcribed classical kinetic law
+mispredicts an independent 2024 laboratory corpus by a factor of six at
+the median, and that measured gap calibrates the adverse stress test.
+Across two regimes, benign random mismatch and the sixfold stress, the
+proposed loop is the only tested policy essentially free of constraint
+violations (zero violation days benign at +33% power uplift; 0.50
+post-warm-up days under stress against 17.2 for the robust open loop).
+Two pre-registered negative results are reported as results: zero-shot
+residual transfer actively harms, and scalar modifier adaptation cannot
+stabilize a multiplicative error on a quartic constraint. Every physics
+component and the sensing pattern itself are validated out-of-sample,
+yielding two findings of independent geochemical interest and a design
+principle: identifiability precedes correction.
+
+Every quantitative claim regenerates from a single gate script (94
+automated checks across 13 modules, deterministic seeds throughout)
+against checksum-validated transcriptions of the primary sources; the
+repository accompanies the paper and an archival release is planned at
+acceptance.
+
+The manuscript is approximately 5,948 words with six figures and
+three tables. It is my original work, is not under consideration at any
+other journal, and I am the sole author. I have no competing interests
+to declare. Reviewers with expertise in soft sensing and hybrid
+modeling, real-time optimization and modifier adaptation, or geothermal
+process chemistry would be well placed to assess it.
+
+Thank you for considering this work.
+
+Sincerely,
+Bien Don Busico
+University of the Philippines Diliman, Quezon City, Philippines
+bienbusico@gmail.com

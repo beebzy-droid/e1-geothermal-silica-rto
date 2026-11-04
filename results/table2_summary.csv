@@ -1,0 +1,5 @@
+arm,mw,uplift_pct,viol_days_mean,viol_days_max,inh_php_mwh,net_php_h
+baseline,5.03,0.0,0.0,0,85.92,27222.0
+rto_nominal,7.12,41.67,0.17,1,51.55,38809.3
+rto_ma,9.26,84.14,5.33,12,41.22,50545.47
+rto_hybrid,6.71,33.36,0.0,0,53.47,36520.51
