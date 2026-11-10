@@ -39,7 +39,3 @@ Surface brine / reinjection line only. **Excluded:** reservoir-scale modeling, c
 
 ## License
 MIT (code). See `LICENSE`. Zenodo DOI minted at pre-submission release (P9).
-
-## Third-party inputs (not redistributed)
-- Scott et al. 2024 supplementary Excel: download via doi:10.1016/j.gca.2024.02.017, save as literature/scott2024_supplementary_dataset.xlsx
-- Cited papers are not included; see literature/references.bib
