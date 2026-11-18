@@ -1,41 +1,99 @@
-# ipis-thesis-geothermal-silica
+# Real-time optimization of reinjection temperature and inhibitor dose for geothermal silica scaling control
 
-**Physics-Informed Soft Sensing and Real-Time Inhibitor Optimization for Silica Scaling Mitigation in Philippine Liquid-Dominated Geothermal Brine Systems**
+Hybrid soft sensing and robust real-time optimization (RTO) for controlling
+amorphous-silica scaling at the reinjection line of liquid-dominated
+geothermal fields, demonstrated in silico on brine chemistry from Philippine
+fields.
 
-Idea **E1** — strongest alternative to the pyrolysis line. Part of the IPIS research program.
+**Manuscript:** *Real-time optimization of reinjection temperature and
+inhibitor dose for geothermal silica scaling control under uncertain kinetics
+and sparse measurements.* Bien Don Busico, University of the Philippines
+Diliman. Submitted to *Geothermics* (Elsevier), November 2026; under review.
 
-## One-line contribution
-A first-principles silica saturation-index and polymerization-kinetics model, fused with an ML residual, forms a soft sensor for scaling rate along the brine line; this drives a real-time optimizer for inhibitor dose and reinjection temperature that is robust to brine-chemistry uncertainty.
+This repository holds all code, transcribed primary data, result files,
+figures and the submission package. Every number, table and figure in the
+manuscript is regenerated from the committed result files by the scripts
+here — nothing is typed by hand.
 
-## Target journal
-Journal of Process Control (fallback: Geothermics).
+## What the study finds
 
-## Why this one
-The soft-sensor + RTO architecture maps directly onto the IPIS stack, so E1 is a **lateral move, not a restart**. It is independent of W1/D — no upstream pin, no shared flowsheet.
+- The classical amorphous-silica polymerization rate law (Rothbaum & Rohde,
+  1979) differs from the independent 2024 laboratory dataset of Scott et al.
+  by a factor of **six at the median**, and its temperature dependence is
+  non-Arrhenius above about 90 °C.
+- A daily feedback correction of the scaling constraint is safe **only when
+  computed at the measured silica concentration**. Computed at the design-case
+  brine composition it mistakes the optimizer's own safety margin for model
+  error: under sixfold-faster kinetics the line then exceeds the scaling limit
+  on roughly an order of magnitude more days per run.
+- With the measured anchor, a **scalar** bias correction performs as well as
+  Gaussian-process and gradient-boosted (machine-learned) corrections. The
+  scheme needs no machine learning — only a daily silica grab sample and one
+  scaling-rate measurement.
+- A hybrid soft sensor estimates the scaling rate with about **51 % lower
+  error** than its kinetic core, provided its correction is earned from the
+  plant's own labels.
 
-## Status
-- [x] P0 — Repository & environment setup
-- [ ] P1 — Literature review & gap matrix
-- [ ] P2 — Brine saturation + silica polymerization model (verified)
-- [ ] P3 — Brine-chemistry dataset + scaling/output case series
-- [ ] P4 — Physics-informed scaling-rate soft sensor + RTO/MPC
-- [ ] P5 — Validation vs. published case data; empirical-dosing baseline
-- [ ] P6 — Sensitivity/UQ + inhibitor-cost and binary-opportunity accounting
-- [ ] P7 — Manuscript drafting (JPC)
-- [ ] P8 — Submission
-- [ ] P9 — Zenodo DOI preservation
+Exact figures, confidence intervals and the operating-point analysis are in
+the manuscript under `submission/geot/`.
 
-## Environment
+## Repository layout
+
+| Path | Contents |
+|------|----------|
+| `src/` | Models, simulated plant, soft sensor, robust RTO, experiments, and the self-checking gate (`run_all_checks.py`) |
+| `src/data/` | Re-keyed primary data tables (e.g. Rothbaum & Rohde 1979, Table II) |
+| `results/` | All committed result files (CSV/JSON) the manuscript draws from |
+| `figures/` | Generated figures — vector PDF + PNG |
+| `manuscript/` | LaTeX sources, the number/figure build scripts, and the Word (`.docx`) builder |
+| `submission/geot/` | *Geothermics* submission package (manuscript, figures, supplement, letters) |
+| `submission/cace/` | Earlier *Computers & Chemical Engineering* package, kept as a record |
+| `literature/` | `references.bib` and the third-party data notice |
+| `docs/` | Project notes |
+
+## Reproducing the results
+
+Requirements: Python 3.13 with the pinned scientific stack (NumPy, SciPy,
+pandas, LightGBM, SALib, Matplotlib) plus `phreeqpython`. A conda environment
+named `e1` is assumed.
+
 ```bash
-conda env create -f environment.yml
-conda activate ipis-thesis-geothermal-silica
+conda activate e1
+
+# 1. Third-party dataset — NOT redistributed here (see DATA_NOTICE.md).
+#    Download the Scott et al. (2024) supplementary Excel file from
+#    doi:10.1016/j.gca.2024.02.017 and save it as:
+#    literature/scott2024_supplementary_dataset.xlsx
+
+# 2. Integrity gate — runs every module's self-checks.
+python src/run_all_checks.py
+#    expected tail: GATE OPEN — 16 modules, 111 checks
+
+# 3. Regenerate the manuscript numbers, figures and submission files.
+python manuscript/build_submission.py   # numbers, journal figures, LaTeX proof
+python manuscript/build_docx.py          # Word manuscript, supplement, letters
 ```
 
-## Data posture (read before P3)
-Designed to stand alone **in-silico** on published brine chemistry. Real EDC/field operating data is an *upgrade, not a dependency* — if it never arrives, the thesis still completes. See `data/README.md` for the evidence-tier rules.
+All stochastic components are seeded, result files are byte-reproducible on
+the pinned environment, and a provenance gate fails if any committed result no
+longer matches the current code. The convention is that no commit is made
+against a failing ("red") gate.
 
-## Scope guard
-Surface brine / reinjection line only. **Excluded:** reservoir-scale modeling, calcite scaling, full binary-plant design (binary enters only as an opportunity metric).
+## Data availability
 
-## License
-MIT (code). See `LICENSE`. Zenodo DOI minted at pre-submission release (P9).
+Code, transcribed primary data and all result files are in this repository.
+The independent validation dataset is the supplementary material of Scott et
+al. (2024), obtained from the article (doi:10.1016/j.gca.2024.02.017); it is
+**not** redistributed here. See `DATA_NOTICE.md`.
+
+## Author
+
+Bien Don Busico — University of the Philippines Diliman, Quezon City 1101,
+Philippines.
+
+## Acknowledgement of tools
+
+Analysis code and manuscript were developed with the assistance of a
+generative-AI assistant under the author's direction; the author ran the gate
+and all experiments and is responsible for the code and results. See the
+manuscript's declaration for details.
