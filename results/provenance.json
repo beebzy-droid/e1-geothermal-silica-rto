@@ -1,0 +1,26 @@
+{
+  "anchoring": {
+    "product": "85cd88e617988275",
+    "recipe": "0201313d08c22937"
+  },
+  "frontier": {
+    "product": "71d99f0de2ab2241",
+    "recipe": "dd840a0f1d9bd95c"
+  },
+  "sobol": {
+    "product": "763e7504eccde72c",
+    "recipe": "73e8be6ece9b429a"
+  },
+  "table1": {
+    "product": "3bb42542e4ec1138",
+    "recipe": "4d53fd853f0ab83f"
+  },
+  "table2": {
+    "product": "c734991040a63d00",
+    "recipe": "3cf8192f4254bffb"
+  },
+  "table2b": {
+    "product": "3f9f74e11b0bde35",
+    "recipe": "48e20b1fdb372b0b"
+  }
+}

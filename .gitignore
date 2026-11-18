@@ -1,22 +1,30 @@
+# --- Third-party / private inputs — never commit (see DATA_NOTICE.md) ---
+# Scott et al. (2024) supplementary dataset: download per DATA_NOTICE.md
+literature/scott2024_supplementary_dataset.xlsx
+*.xlsx
+# Author-provided reference model for cross-checking only; not redistributed
+reference/
+*author_provided*
+# Local-only transcription aids (copyrighted source excerpts)
+literature/extracts/
+
+# --- Python ---
 __pycache__/
 *.py[cod]
-.ipynb_checkpoints/
-.env
 .venv/
 venv/
+.ipynb_checkpoints/
 
-/data/raw/
-/data/interim/
-/data/**/*.csv
-/data/**/*.parquet
-/data/**/*.xlsx
-!data/README.md
-
-/results/**/*.pkl
-/results/**/*.joblib
-
-*.dwxmz
-*.bkp
-
-.DS_Store
+# --- LaTeX build artifacts ---
+*.aux
 *.log
+*.out
+*.bbl
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db

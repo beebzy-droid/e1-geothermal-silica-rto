@@ -1,0 +1,114 @@
+\section{Discussion}\label{sec:discussion}
+
+\subsection{Implications for field operation}\label{sec:field}
+
+The scheme that did best is also the simplest to run. It needs the
+silica grab samples that field chemistry programs already take, here
+every 8~h, one scaling-rate measurement per day, and a daily calculation
+that takes well under a second on a laptop. The correction is one
+number per day: the measured rate minus the model rate at the measured
+silica concentration and the current temperature and dose, filtered
+with a gain of one half. Two choices need care. The first is the
+anchor. An operator who compares the measured rate with the design-case
+prediction, a natural reference when the design case is the document of
+record, will read the design margin as model error. The second is the
+back-off. Under sixfold faster kinetics a gain of $\kappa = 1$ on the
+correction's own prediction-error standard deviation exchanged
+\CT{boCA}{u}{abs} points of power gain for \CT{boCA}{v}{abs} fewer
+violation days per run, while without systematic kinetic error it cost
+\NUM{boCAB} points and bought nothing. A site without kinetic data of
+its own should therefore start with $\kappa$ near one and lower it as
+the history of the correction shows the model error to be small.
+Because the safe response to a kinetic error is a few kelvin of
+reinjection temperature (Section~\ref{sec:operating}), the set-point
+changes the scheme asks for are of a size an operator would treat as
+routine.
+
+A field trial can reuse the pilot designs of Philippine inhibitor
+programs, in which a side stream of treated brine runs through an
+insulated test line with inspection spools and retention vessels while
+temperature, pressure and silica are monitored~\citep{see2010wgc}. Run
+at the optimized set-points, such a line would test the policy and,
+through its spools, calibrate the scaling limit against wall growth.
+
+\subsection{Scaling limit and wall growth}\label{sec:units}
+
+The constraint is a polymerization (monomer-depletion) rate, not a rate
+of wall growth. The molecular-deposition treatment of
+\citet{weres1981kinetics}, transcribed under the same integrity protocol
+(its printed checkpoints reproduce, including the 3.0~kcal/mol effective
+activation energy; one internal inconsistency in its Eq.~[4c] is
+documented and not silently repaired), converts
+$r_{\max} = 0.5$~g\,t$^{-1}$\,min$^{-1}$ into a wall growth of about
+0.3~mm/yr at the optimized operating point and 0.04--1.6~mm/yr across
+90--175~$^{\circ}$C. That is a lower bound on scale growth. Field
+deposits also grow by the aggregation and cementation of colloidal
+silica~\citep{vandenheuvel2018understanding}, and inhibitor-treated
+Philippine lines have shown 2.4--11.9~mm/yr in a 0.5~ppm test at Leyte
+and up to about 20~mm/yr projected along a hot-injection pilot line at
+Bacman~\citep{baltazar2014grc,see2010wgc}. The limit used here is
+therefore a placeholder, to be calibrated against spool or coupon data
+at the site. In the sensitivity study a fourfold band of $r_{\max}$
+moves the optimal temperature far less than the kinetic uncertainty
+does (total-order index \NUM{SobSTTrmax} against \NUM{SobSTT}).
+
+\subsection{Limitations}\label{sec:limits}
+
+The closed-loop results are in silico. The plant is simulated, although
+every physical ingredient, from solubility and kinetics to the brine
+envelope and the inhibitor response, comes from primary literature and,
+wherever independent data exist, was tested against them
+(Section~\ref{sec:labtest}). Component-wise validation on real data
+combined with a closed loop under parameterized mismatch is an
+intermediate step between simulation-only studies and a field trial,
+not a substitute for the trial.
+
+The ranking among the measured-anchored corrections holds for a line
+held near one operating point, with one label per day, weekly refits of
+the learned models, and the particular regressors and uncertainty
+estimates used here. A line whose brine steps when wells are switched
+would favour a correction that depends on the state over one that is
+merely current, and that case was not tested. The Gaussian-process arm
+compares a regressor, not Gaussian-process modifier adaptation, whose
+trust regions and acquisition functions might change its curve.
+
+Violations are counted on the realized plant. Every feedback policy, by
+tightening or relaxing the constraint from what the plant returns,
+trades the worst-case guarantee of Eq.~\eqref{eq:rto} for performance
+at the realized brine. Under the sixfold stress a policy that kept the
+full envelope guarantee would have to run hotter than fixed practice,
+which is what the log-space correction at the measured anchor does; the
+additive corrections are safe on the realized plant but would
+under-correct if the brine moved to the worst-case vertex.
+
+The chemistry is near neutral. High-pH brines need silica ionization
+corrections that are deferred here (the speciation layer exists in the
+repository but is not used in the loop), and acid dosing, the third
+lever of Philippine practice~\citep{remoroza2008ph}, is not modeled.
+Economic figures are scenario values with declared ranges.
+
+Finally, the anchoring ablation exists because an initial analysis used
+the design-case anchor for its scalar baseline and concluded, wrongly,
+that the hybrid loop was the only safe policy. The ablation, the
+measured-anchored scalar family, the Gaussian-process comparator, the
+gain sweep and fourteen of the twenty plants were added after that
+error was found. The effect of the anchor, an order of magnitude in
+violation days with intervals far from zero and a mechanism reproduced
+by a separate diagnostic, is secure; the finer comparisons among the
+corrections were not registered in advance and would merit replication.
+
+\subsection{Beyond silica}\label{sec:general}
+
+The anchoring result does not depend on silica chemistry. Whenever an
+operating point is optimized against a worst-case envelope of
+composition and corrected from plant feedback, the feedback has to be
+compared with the model at the realized composition, because at the
+design case it carries the robustness margin as well as the model
+error. The steeper the scaling law, the larger the margin in rate terms
+and the worse the confusion: here the design-case brine, at 911~mg/kg,
+is only 7\% more concentrated than the nominal operating brine, yet the
+model rates at the two differ by a median factor of \NUM{AnMarginmed}. The same care applies to calcite, stibnite or barite limits set
+from envelope calculations~\citep{tonkul2021characterization,%
+omrani2025probabilistic}. The second lesson is more modest: on this
+problem a better estimator did not make a better controller, and the
+simplest correction that used the right measurement was as good as any.

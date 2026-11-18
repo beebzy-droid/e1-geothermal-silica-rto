@@ -1,29 +1,68 @@
 """
 run_control_experiment.py — E1 / ipis-thesis-geothermal-silica
-P4 build 4 (final): closed-loop benchmark — manuscript Table 2.
+Closed-loop benchmark, benign regime — manuscript Table 2.
 
-    cd src && python run_control_experiment.py            (full, ~10-30 min)
+    cd src && python run_control_experiment.py            (full, ~10-20 min)
     cd src && python run_control_experiment.py --smoke    (pipeline check)
 
+CHANGELOG 2026-11-10 (P8b) — BASELINE CORRECTION, found after submission
+    The original feedback baseline ("rto_ma") computed its daily
+    innovation against the model evaluated at the NOMINAL brine-B
+    composition, while the hybrid arm was given the MEASURED silica grab
+    sample. That is not a like-for-like comparison: on a fourth-power
+    constraint, day-to-day brine variation aliases into a
+    nominal-anchored modifier and makes it hunt. The fix applied here:
+      * the primary feedback baseline is now constraint adaptation
+        anchored to the measured silica (rto_ma_meas);
+      * the nominal-anchored arms are KEPT as an explicit anchoring
+        ablation (rto_ma_nom = the old rto_ma, numbers unchanged);
+      * the hybrid and GP arms use the measured anchor during warm-up too
+        (the same bug sat in the hybrid's warm-up path);
+      * a GP-residual comparator and a back-off variant of the scalar
+        baseline complete a correction-model x back-off design.
+    These arms were added AFTER seeing results (post hoc, not
+    pre-registered) and are reported as such in the manuscript.
+    run_arm(..., warmup_anchor="nominal") reproduces the pre-fix hybrid
+    numbers of commit b6ed76d exactly.
+
 ARMS (per plant, identical brine/mismatch realization across arms)
-    baseline    Fixed T=150 C, dose=1.0 ppm continuous — the empirical
-                practice pattern (Gallup-informed dosing; cf. the EDC/BWA
-                Bacman program, baltazar2014grc [T2]); no feedback.
-    rto_nominal Vertex-robust RTO solved once with eps=0; applied constant.
-                (No feedback — isolates the value of the model alone.)
-    rto_ma      Daily RTO; eps updated each day from the observed daily
-                trailing-mean rate label (MA bias, robust_rto mechanism).
-    rto_hybrid  Daily RTO whose constraint IS the per-plant hybrid soft
-                sensor (trained on the plant's own accumulated labels,
-                retrained weekly, LOO-credibility lam): the N2 coupling
-                made literal. Warmup: runs as rto_ma until >=7 labels.
+    baseline        Fixed T=150 C, dose=1.0 ppm continuous (empirical
+                    practice pattern; baltazar2014grc [T2]); no feedback.
+    rto_nominal     Vertex-robust RTO solved once; applied constant.
+    --- anchoring ablation (scalar constraint adaptation, Chachuat 2008) --
+    rto_ma_nom      additive modifier, innovation vs model at NOMINAL
+                    brine B  (= the pre-fix "rto_ma")
+    rto_malog_nom   log-space (multiplicative) modifier, NOMINAL anchor
+    rto_ma_meas     additive modifier, innovation vs model at the
+                    MEASURED silica  (primary feedback baseline)
+    rto_malog_meas  log-space modifier, MEASURED anchor
+    --- correction model x back-off gain (all measured-anchored) ----------
+    Three families, each run at kappa in KAPPA_SWEEP; the arm name carries
+    the gain, e.g. rto_hybrid_k1:
+    rto_ma_meas_k*  scalar additive modifier + kappa * sd of its own
+                    one-step prediction error (trailing 14 d)
+    rto_gp_k*       GP residual (gp_residual.py) + kappa * posterior
+                    predictive sd
+    rto_hybrid_k*   LightGBM residual with LOO credibility + kappa * LOO
+                    error sd
+    Each family's sd is on its own scale, so equal kappa is NOT equal
+    conservatism across families: compare the families as frontier
+    curves over the sweep, not point by point.
 
-METRICS per arm (mean +/- sd over plants): gross MW, uplift % vs baseline,
-constraint-violation days (realized trailing-24h mean rate > r_max),
-inhibitor cost PHP/MWh, net objective PHP/h.
+PLANTS
+    20 per regime. The first six (seeds 0-5; 100-105 under stress) are the
+    plants of the July 2026 runs; the pre-registered verdicts are
+    evaluated on those six. The other fourteen were added on 2026-11-10 so
+    that differences between schemes come with a confidence interval.
 
-Outputs: ../results/table2_control.csv, table2_summary.csv,
-         ../figures/fig_control_benchmark.png
+METRICS per arm (mean over plants): gross MW, uplift % vs baseline,
+constraint-violation days (realized trailing-24h mean rate > r_max; total
+from day 2 and post-warm-up from day 9), inhibitor cost PHP/MWh, net
+objective PHP/h. Violations are counted on the REALIZED plant, not on the
+worst-case vertex of the envelope.
+
+Outputs: ../results/table2_control.csv, table2_summary.csv
+         (figure: closed_loop_figure.py, after both regimes have run)
 """
 
 from pathlib import Path
@@ -42,11 +81,19 @@ from robust_rto import (Economics, RTOConfig, RobustRTO, scenario_brines,
                         model_rate)
 import lightgbm as lgb
 
+from gp_residual import GPResidual
+
 RESULTS = Path(__file__).parent.parent / "results"
 FIGURES = Path(__file__).parent.parent / "figures"
 
 SMOKE = "--smoke" in sys.argv
-PLANTS = list(range(2 if SMOKE else 6))
+if SMOKE and __name__ == "__main__":
+    # smoke output goes to a temp dir: never over the full-scale results
+    import tempfile
+    _tmp = Path(tempfile.mkdtemp(prefix="e1_smoke_"))
+    RESULTS, FIGURES = _tmp / "results", _tmp / "figures"
+PLANTS = list(range(2 if SMOKE else 20))
+PREREG_N = 6     # the July 2026 plants: first six seeds of each regime
 DAYS = 8.0 if SMOKE else 45.0
 DT_MIN = 10.0
 WARMUP_LABELS = 7
@@ -54,10 +101,27 @@ RETRAIN_EVERY_D = 7
 
 CFG = RTOConfig()
 ECON = Economics()
-KAPPA = 1.0   # uncertainty back-off: constraint uses r_hat inflated by
-              # exp(KAPPA * resid_sd) — the sensor's own LOO error. kappa=0
-              # reproduces the no-back-off hybrid (kept as ablation arm
-              # rto_hybrid_k0 in the stress experiment).
+KAPPA_SWEEP = (0.0, 0.5, 1.0, 2.0)   # back-off gains (frontier sweep);
+                                     # kappa=1 was the July 2026 design
+                                     # value for the hybrid
+BACKOFF_WINDOW_D = 14   # trailing window for the scalar family's own
+                        # one-step prediction-error sd
+
+FIXED_ARMS = ("baseline", "rto_nominal",
+              "rto_ma_nom", "rto_malog_nom", "rto_malog_meas")
+KAPPA_FAMILIES = ("rto_ma_meas", "rto_gp", "rto_hybrid")
+ARMS_ALL = FIXED_ARMS + tuple(f"{fam}_k{k:g}" for fam in KAPPA_FAMILIES
+                              for k in KAPPA_SWEEP)
+
+
+def parse_arm(arm: str):
+    """'rto_hybrid_k0.5' -> ('rto_hybrid', 0.5); fixed arms -> (arm, 0.0)."""
+    if arm in FIXED_ARMS:
+        return arm, 0.0
+    fam, _, k = arm.rpartition("_k")
+    if fam not in KAPPA_FAMILIES:
+        raise ValueError(f"unknown arm {arm!r}")
+    return fam, float(k)
 
 
 # ---------------------------------------------------------------------------
@@ -132,16 +196,35 @@ def hybrid_rate_grids(fast: FastRTO, model: lgb.LGBMRegressor, lam: float,
     return out
 
 
+def gp_rate_grids(fast: FastRTO, gp: GPResidual, sio2_held: float,
+                  kappa: float = 0.0) -> dict:
+    """Constraint grids from the GP residual: same residual target and
+    same measured-silica anchor as the hybrid; only the regressor (and
+    therefore the uncertainty estimate) differs."""
+    nT, nD = len(fast.Ts), len(fast.Ds)
+    Tg = np.repeat(fast.Ts, nD)
+    Dg = np.tile(fast.Ds, nT)
+    s_est = np.maximum(sio2_held - np.repeat(fast.ce, nD), 0.0)
+    mu, sd = gp.predict(np.column_stack([Tg, Dg, s_est]))
+    shift = (mu + kappa * sd).reshape(nT, nD)
+    return {v: np.maximum(np.expm1(np.log1p(fast.core[v]) + shift), 0.0)
+            for v in fast.brines}
+
+
 # ---------------------------------------------------------------------------
 # Closed-loop episode for one arm
 # ---------------------------------------------------------------------------
 
 def run_arm(seed: int, arm: str, fast: FastRTO,
             days: float = DAYS, logk_bias_shift: float = 0.0,
-            mismatch: MismatchConfig | None = None) -> dict:
+            mismatch: MismatchConfig | None = None,
+            warmup_anchor: str = "measured") -> dict:
     """logk_bias_shift threads the adverse-mismatch stress knob (Table 2b);
     mismatch overrides the random-draw config (None = Table 2 defaults).
-    Defaults reproduce Table 2 exactly."""
+    warmup_anchor="nominal" reproduces the pre-fix warm-up of the learned
+    arms (commit b6ed76d) for audit; "measured" is the corrected default."""
+    arm_label = arm
+    arm, kappa = parse_arm(arm)
     ep = EpisodeConfig(days=days, dt_min=DT_MIN)
     n = int(days * 24 * 60 / DT_MIN)
     steps_day = int(24 * 60 / DT_MIN)
@@ -149,12 +232,15 @@ def run_arm(seed: int, arm: str, fast: FastRTO,
                            logk_bias_shift=logk_bias_shift)
     sess = PlantSession(plant, ep)
 
-    eps = 0.0
-    labels = []          # (features_row_dict, label_value) accumulated daily
+    eps = 0.0            # additive constraint modifier
+    theta = 0.0          # log-space (multiplicative) constraint modifier
+    pred_err = []        # one-step errors of the corrected scalar model
     lab_feats, lab_y = [], []
     sensor, lam, loo_sd = None, 0.0, 1.0
-    is_hybrid = arm.startswith("rto_hybrid")
-    kappa = 0.0 if arm.endswith("_k0") else KAPPA
+    gp = None
+    is_hybrid = arm == "rto_hybrid"
+    is_gp = arm == "rto_gp"
+    learned = is_hybrid or is_gp
     if arm == "baseline":
         T_cmd, d_cmd = 150.0, 1.0
     else:
@@ -202,41 +288,75 @@ def run_arm(seed: int, arm: str, fast: FastRTO,
             })
             lab_y.append(label)
 
-            if arm == "rto_ma" or is_hybrid:
-                r_mod = model_rate(T_cmd, d_cmd, fast.brines["B"])
-                eps = (1 - CFG.alpha_bias) * eps \
-                    + CFG.alpha_bias * (label - r_mod)
-            if is_hybrid and len(lab_y) >= WARMUP_LABELS \
-                    and (day % RETRAIN_EVERY_D == 0 or sensor is None):
+            # ---- feedback: two anchors for the same daily label --------
+            sio2_now = sio2_held or fast.brines["B"]
+            r_nom = model_rate(T_cmd, d_cmd, fast.brines["B"])   # nominal
+            r_meas = model_rate(T_cmd, d_cmd, sio2_now)          # measured
+            a = CFG.alpha_bias
+            if arm == "rto_ma_nom":
+                eps = (1 - a) * eps + a * (label - r_nom)
+            elif arm == "rto_malog_nom":
+                if r_nom > 1e-9 and label > 1e-9:
+                    theta = (1 - a) * theta \
+                        + a * (np.log(label) - np.log(r_nom))
+            elif arm == "rto_malog_meas":
+                if r_meas > 1e-9 and label > 1e-9:
+                    theta = (1 - a) * theta \
+                        + a * (np.log(label) - np.log(r_meas))
+            elif arm == "rto_ma_meas" or learned:
+                r_anchor = r_meas
+                if learned and warmup_anchor == "nominal":
+                    r_anchor = r_nom                  # pre-fix behaviour
+                pred_err.append(label - (r_anchor + eps))
+                eps = (1 - a) * eps + a * (label - r_anchor)
+
+            # ---- learned constraint models (weekly refit, same schedule) -
+            if learned and len(lab_y) >= WARMUP_LABELS \
+                    and (day % RETRAIN_EVERY_D == 0
+                         or (sensor is None and gp is None)):
                 labdf = pd.DataFrame(lab_feats)
                 labdf["label_24h"] = lab_y
                 y_h = np.log1p(labdf["label_24h"]) - labdf["log1p_core_24h"]
-                sensor = lgb.LGBMRegressor(**_LGB_SMALL).fit(
-                    labdf[PHYS_FEATURES], y_h)
-                lam, loo_sd = _loo_shrinkage(labdf)
+                if is_hybrid:
+                    sensor = lgb.LGBMRegressor(**_LGB_SMALL).fit(
+                        labdf[PHYS_FEATURES], y_h)
+                    lam, loo_sd = _loo_shrinkage(labdf)
+                else:
+                    Xg = labdf[["T_mean_24h", "dose_mean_24h",
+                                "s_est_mean_24h"]].to_numpy(dtype=float)
+                    gp = GPResidual().fit(Xg, y_h.to_numpy(dtype=float))
 
+            # ---- re-decide ---------------------------------------------
             if arm == "rto_nominal":
                 pass                                  # constant policy
-            elif arm == "rto_ma":
+            elif arm == "rto_ma_nom":
                 T_cmd, d_cmd, _ = fast.solve(eps=eps)
-            elif is_hybrid:
+            elif arm == "rto_ma_meas":
+                w = pred_err[-BACKOFF_WINDOW_D:]
+                sd_u = float(np.std(w, ddof=1)) if len(w) >= 3 else 0.0
+                T_cmd, d_cmd, _ = fast.solve(eps=eps + kappa * sd_u)
+            elif arm in ("rto_malog_nom", "rto_malog_meas"):
+                g = {v: c * np.exp(theta) for v, c in fast.core.items()}
+                T_cmd, d_cmd, _ = fast.solve(eps=0.0, rate_grids=g)
+            elif learned:
                 if sensor is not None:
-                    grids = hybrid_rate_grids(fast, sensor, lam,
-                                              sio2_held or fast.brines["B"],
+                    grids = hybrid_rate_grids(fast, sensor, lam, sio2_now,
                                               sd=loo_sd, kappa=kappa)
                     T_cmd, d_cmd, _ = fast.solve(eps=0.0, rate_grids=grids)
+                elif gp is not None:
+                    grids = gp_rate_grids(fast, gp, sio2_now, kappa=kappa)
+                    T_cmd, d_cmd, _ = fast.solve(eps=0.0, rate_grids=grids)
                 else:
-                    # WARMUP RULE: until the sensor earns credibility,
-                    # feedback may only TIGHTEN the constraint (eps >= 0),
-                    # never relax it — scalar bias relaxation is exactly
-                    # the unsafe extrapolation the rto_ma arm demonstrates.
+                    # WARMUP RULE: until the learned model has its first
+                    # WARMUP_LABELS labels, feedback may only TIGHTEN the
+                    # constraint (eps >= 0), never relax it.
                     T_cmd, d_cmd, _ = fast.solve(eps=max(eps, 0.0))
             T_hist.append(T_cmd); d_hist.append(d_cmd)
 
     hours = days * 24.0
     mw_mean = mw_sum / n
     mwh = mw_mean * hours
-    return {"plant": seed, "arm": arm, "gross_mw_mean": mw_mean,
+    return {"plant": seed, "arm": arm_label, "gross_mw_mean": mw_mean,
             "violation_days": violations,
             "viol_days_postwarmup": violations_postwarmup,
             "inhibitor_php_per_mwh": cost_sum / max(mwh, 1e-9),
@@ -244,8 +364,47 @@ def run_arm(seed: int, arm: str, fast: FastRTO,
             - cost_sum / hours}
 
 
+def summarize(res: pd.DataFrame, arms) -> pd.DataFrame:
+    base = res[res.arm == "baseline"].set_index("plant")["gross_mw_mean"]
+    res = res.copy()
+    res["uplift_pct"] = [100 * (r.gross_mw_mean / base[r.plant] - 1)
+                         for r in res.itertuples()]
+    return (res.groupby("arm")
+            .agg(mw=("gross_mw_mean", "mean"),
+                 uplift_pct=("uplift_pct", "mean"),
+                 uplift_sd=("uplift_pct", "std"),
+                 viol_days_mean=("violation_days", "mean"),
+                 viol_days_sd=("violation_days", "std"),
+                 viol_days_max=("violation_days", "max"),
+                 viol_postwu_mean=("viol_days_postwarmup", "mean"),
+                 inh_php_mwh=("inhibitor_php_per_mwh", "mean"),
+                 net_php_h=("net_php_h", "mean"))
+            .reindex(list(arms)).round(2))
+
+
+def paired_contrast(res: pd.DataFrame, a: str, b: str, col: str,
+                    n_boot: int = 4000, seed: int = 0):
+    """Mean of (a - b) over plants with a seeded percentile-bootstrap 95%
+    interval. Plants are the resampling unit (arms share each plant's
+    brine and mismatch realization, so the comparison is paired)."""
+    if col == "uplift_pct" and col not in res.columns:
+        base = res[res.arm == "baseline"].set_index("plant")["gross_mw_mean"]
+        res = res.copy()
+        res[col] = [100 * (r.gross_mw_mean / base[r.plant] - 1)
+                    for r in res.itertuples()]
+    pa = res[res.arm == a].set_index("plant")[col]
+    pb = res[res.arm == b].set_index("plant")[col]
+    d = (pa - pb.reindex(pa.index)).to_numpy(dtype=float)
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, len(d), size=(n_boot, len(d)))
+    means = d[idx].mean(axis=1)
+    lo, hi = np.percentile(means, [2.5, 97.5])
+    return float(d.mean()), float(lo), float(hi)
+
+
 def main() -> None:
-    RESULTS.mkdir(exist_ok=True); FIGURES.mkdir(exist_ok=True)
+    RESULTS.mkdir(parents=True, exist_ok=True)
+    FIGURES.mkdir(parents=True, exist_ok=True)
     fast = FastRTO()
 
     # consistency check vs the gate-tested grid solver
@@ -259,47 +418,30 @@ def main() -> None:
         print("SMOKE MODE — pipeline verification only.")
 
     rows = []
-    arms = ("baseline", "rto_nominal", "rto_ma", "rto_hybrid")
     for s in PLANTS:
-        for arm in arms:
-            rows.append(run_arm(s, arm, fast))
-            print(f"  plant {s} {arm:11s}  MW={rows[-1]['gross_mw_mean']:.2f} "
-                  f"viol_days={rows[-1]['violation_days']} "
-                  f"inh={rows[-1]['inhibitor_php_per_mwh']:.0f} PHP/MWh")
+        for arm in ARMS_ALL:
+            r = run_arm(s, arm, fast)
+            rows.append(r)
+            print(f"  plant {s} {arm:14s}  MW={r['gross_mw_mean']:.2f} "
+                  f"viol_days={r['violation_days']} "
+                  f"(postwarmup={r['viol_days_postwarmup']}) "
+                  f"inh={r['inhibitor_php_per_mwh']:.0f} PHP/MWh")
     res = pd.DataFrame(rows)
     res.to_csv(RESULTS / "table2_control.csv", index=False)
-
-    base = res[res.arm == "baseline"].set_index("plant")["gross_mw_mean"]
-    res["uplift_pct"] = res.apply(
-        lambda r: 100 * (r.gross_mw_mean / base[r.plant] - 1), axis=1)
-    summ = (res.groupby("arm")
-            .agg(mw=("gross_mw_mean", "mean"),
-                 uplift_pct=("uplift_pct", "mean"),
-                 viol_days_mean=("violation_days", "mean"),
-                 viol_days_max=("violation_days", "max"),
-                 inh_php_mwh=("inhibitor_php_per_mwh", "mean"),
-                 net_php_h=("net_php_h", "mean"))
-            .reindex(list(arms)).round(2))
+    summ = summarize(res, ARMS_ALL)
     summ.to_csv(RESULTS / "table2_summary.csv")
-    print("\nTABLE 2 (mean over plants):")
+    print("\nTABLE 2 (benign regime, mean over plants):")
     print(summ.to_string())
-
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(10, 4.2))
-    order = list(arms)
-    a1.bar(order, [summ.loc[a, "mw"] for a in order], color="tab:blue")
-    a1.set_ylabel("Mean gross power [MW]"); a1.tick_params(axis="x", rotation=20)
-    a2.bar(order, [summ.loc[a, "viol_days_mean"] for a in order],
-           color="tab:red")
-    a2.set_ylabel("Constraint-violation days (mean)")
-    a2.tick_params(axis="x", rotation=20)
-    fig.suptitle(f"Closed-loop benchmark — {len(PLANTS)} plants x "
-                 f"{DAYS:.0f} d (r_max={CFG.r_max_g_t_min} g/t/min)")
-    fig.tight_layout()
-    fig.savefig(FIGURES / "fig_control_benchmark.png", dpi=200)
-    print("\nDone. Commit results/ and figures/ after visual QA.")
+    if SMOKE:
+        print(f"\nSmoke outputs (discarded): {RESULTS.parent}")
+        return
+    from provenance import stamp
+    stamp("table2")
+    from closed_loop_figure import refresh
+    fig = refresh()
+    print("\nDone." + (f" Closed-loop figure and contrasts refreshed: {fig}"
+                       if fig else " Run run_stress_experiment.py next; "
+                       "it draws the closed-loop figure."))
 
 
 if __name__ == "__main__":

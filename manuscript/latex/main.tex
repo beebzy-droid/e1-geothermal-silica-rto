@@ -1,63 +1,63 @@
-% E1 manuscript — Journal of Process Control (elsarticle)
-% Compile: see compile.bat / README. Easiest path: upload manuscript/latex/,
-% figures/, and literature/references.bib to Overleaf as one project.
-\documentclass[review,number,sort&compress]{elsarticle}
+% E1 manuscript — Geothermics (elsarticle, author-year)
+% Source tree. The submission files are produced by
+%   python manuscript/build_submission.py   (numbers, checks, LaTeX proof,
+%                                            Figure_N.png)
+%   python manuscript/build_docx.py         (Word manuscript, supplementary
+%                                            material, highlights, letters)
+% Both regenerate numbers.tex from results/*.csv first; nothing here is
+% typed by hand that a result file can supply.
+\documentclass[review,authoryear]{elsarticle}
 
 \usepackage{graphicx}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage[colorlinks=true,allcolors=blue]{hyperref}
 \graphicspath{{../../figures/}}
+\emergencystretch=2em   % let TeX loosen a line before overfilling it
+\input{numbers}
 
-\journal{Journal of Process Control}
+\journal{Geothermics}
 
 \begin{document}
 \begin{frontmatter}
 
-\title{A credibility-weighted hybrid soft sensor and uncertainty-consuming
-robust real-time optimization for silica scaling control in Philippine
-geothermal fields: design, negative results, and out-of-sample
-validation}
+\title{Real-time optimization of reinjection temperature and inhibitor
+dose for geothermal silica scaling control under uncertain kinetics and
+sparse measurements}
 
-% AUTHOR METADATA (confirmed by author): sole author, no adviser
-% (independent thesis). Affiliation: University of the Philippines
-% Diliman (author decision, 2026-11-05).
-\author[upd]{Bien Don Busico}
+% AUTHOR METADATA (author decision, 2026-11-05): sole author.
+\author[upd]{Bien Don Busico\corref{cor1}}
 \ead{bienbusico@gmail.com}
+\cortext[cor1]{Corresponding author.}
 \affiliation[upd]{organization={University of the Philippines Diliman},
-city={Quezon City}, country={Philippines}}
+city={Quezon City}, postcode={1101}, country={Philippines}}
 
 \begin{abstract}
 \input{sections/00_abstract}
 \end{abstract}
 
 \begin{keyword}
-soft sensor \sep hybrid modeling \sep real-time optimization \sep
-plant--model mismatch \sep geothermal energy \sep silica scaling \sep
-Philippines
+silica scaling \sep reinjection \sep scale inhibitor \sep real-time
+optimization \sep soft sensor \sep constraint adaptation \sep Philippines
 \end{keyword}
 
 \end{frontmatter}
 
 \input{sections/01_intro}
-\input{sections/02_benchmark}
-\input{sections/03_architecture}
-\input{sections/04_insilico_results}
-\input{sections/05_validation}
-\input{sections/06_discussion}
-\input{sections/07_conclusions}
-
-\section*{Acknowledgments}
-The author thanks Dr.~Samuel Scott for directing him to the study's
-supplementary dataset, for clarifying the published parameterization
-and its corrigendum, and for providing a reference implementation
-script used for cross-checking, which is not redistributed with this
-work. This work received no external funding.
+\input{sections/02_scaling}
+\input{sections/03_methods}
+\input{sections/04_results}
+\input{sections/05_discussion}
+\input{sections/06_conclusions}
 
 \appendix
 \input{sections/appendix}
 
-\bibliographystyle{elsarticle-num}
-\bibliography{references}   % copied in by compile.bat from /literature
+% back matter after the appendices, so that the acknowledgments sit
+% directly before the reference list (Geothermics guide for authors)
+\input{sections/07_backmatter}
+
+\bibliographystyle{elsarticle-harv}
+\bibliography{references}
 
 \end{document}

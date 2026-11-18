@@ -187,3 +187,10 @@ B. Reproducibility: run_all_checks.py (88 checks), pinned seeds, env.
   note the Mapúa MCM B.S.); automated audits pass: 0 rhetorical
   em-dashes, all 21 cross-references resolve against 32 labels, all 26
   citation keys exist in references.bib.
+- 2026-11-11 — v2.0 — P8b after the JPC desk reject: retargeted to
+  Computers & Chemical Engineering; closed-loop section rebuilt around
+  the corrected comparison (anchoring ablation, scalar/GP/hybrid families
+  over a back-off gain sweep, 20 plants, paired CIs); Table 1 regenerated
+  under the current plant; title changed; author-year references built
+  with BibTeX; declarations (CRediT, AI, funding, data) added; every
+  experimental number generated from results/*.csv. See ledger v1.9.

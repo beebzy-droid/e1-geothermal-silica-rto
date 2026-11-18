@@ -1,8 +1,6 @@
 @echo off
-REM E1 manuscript build — run from manuscript\latex\
-copy /Y ..\..\literature\references.bib references.bib
-pdflatex -interaction=nonstopmode main.tex
-bibtex main
-pdflatex -interaction=nonstopmode main.tex
-pdflatex -interaction=nonstopmode main.tex
-echo Done. Open main.pdf
+REM The submission is built by scripts (numbers come from results/*.csv).
+REM Run from the repo root; needs pdflatex + bibtex + elsarticle, pdftoppm,
+REM pandoc and python-docx.
+python manuscript\build_submission.py || exit /b 1
+python manuscript\build_docx.py

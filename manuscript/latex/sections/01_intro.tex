@@ -1,64 +1,107 @@
 \section{Introduction}\label{sec:intro}
 
-Process models tend to be wrong precisely where constraints bind. This
-paper works through a case in which the wrongness can be put on a
-scale. The classical kinetic law for amorphous-silica polymerization,
-transcribed faithfully from its 1979 primary source, mispredicts the
-effective decay rate observed in an independent 2024 laboratory corpus
-by a factor of six at the median. Yet silica scaling must be managed
-daily and at industrial scale. In the liquid-dominated geothermal
-fields of the Philippines, which rank among the largest installed
-capacities in the world~\citep{fronda2020country}, dissolved silica
-sets the floor on reinjection temperature and therefore the ceiling on
-bottoming-cycle power. Mitigation practice at the Bacman- and
-Tiwi-type fields that motivate this study is documented and static:
-fixed inhibitor programs and manually managed reinjection
-temperatures~\citep{see2010wgc,remoroza2008ph,baltazar2014grc,%
-kobayashi2024mahanagdong}. Between a model too wrong to trust and a
-practice too static to optimize sits the control problem addressed
-here.
+Separated brine from liquid-dominated geothermal fields leaves the flash
+plant at or near saturation with amorphous silica. Cooling it further,
+in a bottoming binary unit or along the reinjection line, raises the
+supersaturation that drives silica polymerization and deposition, so
+silica scaling sets the lowest temperature at which the brine can be
+reinjected and with it the heat that a bottoming cycle can recover. In
+the Philippines, whose installed geothermal capacity is among the
+largest in the world and comes from liquid-dominated
+fields~\citep{fronda2020country}, scaling is managed with inhibitor
+programs and pH modification run at fixed operating points.
+Phosphino-carboxylate inhibitor has been dosed at 0.5 to 10~ppm
+depending on the brine and the injection scheme; a 0.5~ppm test at
+Leyte recorded 2.4--11.9~mm/yr of deposition, and a hot-injection pilot
+line at Bacman projected up to about 20~mm/yr along its
+pipes~\citep{see2010wgc,baltazar2014grc}. In a pH-modification trial,
+brine acidified from pH 7.0 to 4.5 was cooled from about 160 to
+120~$^{\circ}$C~\citep{remoroza2008ph}. A fixed operating point has to
+be conservative enough for the worst brine it may meet, and that
+conservatism is paid for in heat that is not recovered.
 
-The individual ingredients are established. Machine-learned predictors
-of geothermal scaling exist in prediction-only
-form~\citep{juhri2024sgw}. Hybrid physics--data modeling has a mature
-canon~\citep{psichogios1992hybrid,thompson1994modeling,%
-vonstosch2014hybrid,karniadakis2021physics}, soft-sensor practice under
-sparse labels is well codified~\citep{kadlec2009data}, and real-time
-optimization under plant--model mismatch has a developed theory of
-modifier adaptation~\citep{marchetti2009modifier,marchetti2010dual,%
-darby2011rto}. What has been missing, and what a constraint with
-fourth-power sensitivity punishes, is the coupling between them: an
-estimator that knows how much of its own learned correction to believe,
-and an optimizer that spends that belief as constraint margin. Two
-pre-registered negative results in this paper show that the coupling is
-not a refinement but a requirement. A residual transferred across
-plants actively harms, and a scalar bias adaptation, the natural first
-recourse, cannot stabilize a multiplicative kinetic error on a
-fourth-power constraint even while it harvests spectacular nominal
-profit.
+Operating closer to the scaling limit requires the scaling rate at the
+operating point, and two things make it hard to know. The first is the
+kinetic model. The classical correlation for amorphous-silica
+polymerization~\citep{rothbaum1979rohde} is fourth order in
+supersaturation, so modest errors in silica concentration or solubility
+are amplified exactly where the limit binds, and, as
+Section~\ref{sec:labtest} shows, its rate level differs from an
+independent modern laboratory dataset~\citep{scott2024silica} by a
+factor of six at the median. Equilibrium codes~\citep{parkhurst2013phreeqc}
+say whether silica will precipitate, not how fast. The second is
+measurement. Silica concentration comes from grab samples analysed a
+few times a day, deposition is measured on spools or coupons over
+weeks~\citep{baltazar2014grc}, and online scale sensors, though
+demonstrated in the field~\citep{okazaki2017fiber}, are not routine. A
+scheme that adjusts the operating point from plant data must work from
+a handful of noisy observations per day.
 
-The contributions are fivefold. First, a credibility-weighted hybrid
-soft sensor whose leave-one-out shrinkage yields provable graceful
-degradation to its physics prior and doubles as the deployment safety
-interlock. Second, a vertex-robust economic real-time optimizer that
-consumes the sensor's correction together with its cross-validated
-uncertainty as a multiplicative back-off. Third, a two-regime
-closed-loop evaluation, spanning benign random mismatch and an adverse
-stress set at the measured sixfold gap, that maps a safety--harvest
-frontier on which the proposed loop is the only policy essentially free
-of violations in both regimes. Fourth, out-of-sample validation of
-every physics component and of the sensing pattern itself against the
-independent 2024 corpus, which yields a reconciliation of second-order
-decay with the classical fourth-order peak-rate law, a mutual
-solubility validation at a median of $1.05\times$, and a design
-principle we state as: identifiability precedes correction. Fifth, a
-fully specified and regenerable benchmark problem, built on
-Philippine-field chemistry, with a quartic constraint, an induction
-delay, a non-monotonic actuator and a $\times 101$ temperature lever,
-offered to the constrained-optimization community.
+Models of scaling have so far served design rather than operation.
+Thermodynamic plant models combined with silica scaling models have
+been used to compare expansion options at
+Dieng~\citep{pambudi2018sustainability}; speciation modeling has set a
+reinjection temperature against stibnite
+scaling~\citep{tonkul2021characterization}; and a probabilistic model
+has selected a temperature setting under uncertain brine composition
+for barite and celestite scaling in a heat
+exchanger~\citep{omrani2025probabilistic}. Machine-learned predictors of
+silica polymerization have been trained on plant
+data~\citep{juhri2024sgw}, and machine learning has been applied to
+steamfield operational optimization~\citep{buster2021gooml}. None of
+these closes a loop around the scaling constraint. Process systems
+engineering offers tools that do. Real-time optimization re-solves an
+economic optimization from plant measurements~\citep{darby2011rto};
+constraint adaptation corrects the model's constraints by their measured
+bias~\citep{chachuat2008constraint}, and modifier adaptation also
+corrects their gradients~\citep{marchetti2009modifier,%
+marchetti2016review}. The mismatch itself can be learned with Gaussian
+processes~\citep{ferreira2018gpma,delriochanona2021tale} or with hybrid
+models in which a data-driven term corrects a mechanistic
+core~\citep{psichogios1992hybrid,vonstosch2014hybrid,sansana2021hybrid},
+and soft sensors estimate unmeasured quantities from sparse laboratory
+labels~\citep{kadlec2009data}. These methods have mostly been tested on
+processes with frequent measurements. A reinjection line offers one
+noisy scaling-rate measurement per day and a constraint with
+fourth-power sensitivity.
 
-Section~\ref{sec:benchmark} states the problem and its industrial
-context, Section~\ref{sec:arch} the architecture,
-Section~\ref{sec:results} the in-silico results,
-Section~\ref{sec:validation} the out-of-sample validation, and
-Section~\ref{sec:discussion} the limitations and what generalizes.
+This study asks how reinjection temperature and inhibitor dose should
+be re-optimized each day when the kinetic model is known to be wrong
+and feedback is that sparse. A brine line built from Philippine field
+chemistry~\citep{sugiaman2004geochemical} and from laboratory kinetics,
+solubility and inhibitor data is simulated with a plant that departs
+from the model in parameterized ways, and daily optimization with
+several feedback corrections is compared with fixed practice on 20
+plant realizations in each of two mismatch regimes. The study began
+with the hypothesis that a learned, uncertainty-aware correction would
+outperform a scalar one. An initial analysis seemed to support it, but
+its scalar baseline computed the correction at the design-case brine
+composition while the learned corrections used the measured silica
+concentration. Compared on equal terms, the hypothesis was not
+supported, and where the correction is computed turned out to matter
+far more than which model computes it. The comparisons added after that
+analysis are reported as post hoc.
+
+The contributions are four. First, the kinetic uncertainty is measured
+rather than assumed: the classical law fitted to its primary data
+differs from independent laboratory decay data by a factor of
+\NUM{KrMed} at the median, its temperature dependence is non-Arrhenius
+above about 90~$^{\circ}$C, and the solubility correlation of
+\citet{gunnarsson2000amorphous} agrees with the 2024 data at a median of
+$1.05\times$. Second, a daily feedback correction of the scaling
+constraint must be computed at the measured silica concentration;
+computed at the design case it reads the optimizer's safety margin as
+model error, and violations of the scaling limit rise by an order of
+magnitude. Third, with the correction computed at the measured
+concentration, a scalar bias updated from one rate measurement per day
+did as well as Gaussian-process and gradient-boosted corrections, so the
+scheme needs no machine learning. Fourth, a hybrid soft sensor estimates
+the scaling rate from sparse daily labels with \NUM{T1redPh}\% less
+error than its kinetic core, and the pattern of its correction holds on
+real laboratory decay curves.
+
+Section~\ref{sec:scaling} sets out the field context and the kinetic
+and solubility evidence, Section~\ref{sec:methods} the simulated line,
+the soft sensor, the optimizer and the experiments,
+Section~\ref{sec:results} the results, and Section~\ref{sec:discussion}
+what they imply for field operation and where they stop.

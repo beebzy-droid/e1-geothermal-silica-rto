@@ -129,7 +129,9 @@ def make_figures(figdir: Path = _FIGDIR) -> dict:
     ax.legend(fontsize=9)
     fig.tight_layout()
     p1 = figdir / "fig_arrhenius_overprediction.png"
-    fig.savefig(p1, dpi=200); plt.close(fig)
+    fig.savefig(p1, dpi=300)
+    fig.savefig(str(p1)[:-4] + ".pdf", metadata={"CreationDate": None})
+    plt.close(fig)
     out["arrhenius"] = {"path": str(p1), "Ea_kJ_mol": ea_kj,
                         "overprediction_150C": over150}
 
@@ -165,7 +167,9 @@ def make_figures(figdir: Path = _FIGDIR) -> dict:
                   f"(C$_{{brine}}$ = {c_brine:.0f} g/t)")
     fig.tight_layout()
     p2 = figdir / "fig_temperature_lever.png"
-    fig.savefig(p2, dpi=200); plt.close(fig)
+    fig.savefig(p2, dpi=300)
+    fig.savefig(str(p2)[:-4] + ".pdf", metadata={"CreationDate": None})
+    plt.close(fig)
     out["lever"] = {"path": str(p2), "c_brine_g_t": c_brine,
                     "rate_90C": marks[90.0], "rate_120C": marks[120.0],
                     "rate_150C": marks[150.0],

@@ -217,7 +217,9 @@ def make_outputs(res: pd.DataFrame, Y: np.ndarray) -> str:
                  f"feasible {100*s['feasible_frac']:.0f}%)")
     fig.tight_layout()
     p = _FIGDIR / "fig_sensitivity_sobol.png"
-    fig.savefig(p, dpi=200); plt.close(fig)
+    fig.savefig(p, dpi=300)
+    fig.savefig(p.with_suffix(".pdf"), metadata={"CreationDate": None})
+    plt.close(fig)
     return str(p)
 
 
@@ -312,7 +314,22 @@ def _full() -> None:
         if len(g):
             print(f"  {q:20s} <- {g.iloc[0]['param']:11s} "
                   f"ST={g.iloc[0]['ST']:.2f} (S1={g.iloc[0]['S1']:.2f})")
-    print(f"\nWrote {p} and results/sensitivity_sobol.csv")
+    # scalar summaries the manuscript quotes: write them, do not retype
+    pd.DataFrame([
+        ("n_base", s["n_base"]), ("n_evals", s["n_evals"]),
+        ("feasible_frac", s["feasible_frac"]),
+        ("mw_q05", s["mw_q05_q50_q95"][0]),
+        ("mw_q50", s["mw_q05_q50_q95"][1]),
+        ("mw_q95", s["mw_q05_q50_q95"][2]),
+        ("lever_q05", s["lever_q05_q50_q95"][0]),
+        ("lever_q50", s["lever_q05_q50_q95"][1]),
+        ("undersat150_frac", s["undersat150_frac"]),
+    ], columns=["quantity", "value"]).to_csv(
+        _RESDIR / "sensitivity_summary.csv", index=False)
+    from provenance import stamp
+    stamp("sobol")
+    print(f"\nWrote {p}, results/sensitivity_sobol.csv and "
+          f"results/sensitivity_summary.csv")
     print("Commit results/ and figures/ after visual QA.")
 
 

@@ -1,0 +1,35 @@
+% Cover letter for Geothermics. Plain paragraphs separated by blank lines;
+% a paragraph starting with "- " becomes a bullet. Number macros are
+% expanded from numbers.tex by build_docx.py; {TITLE} is the article title.
+
+18 November 2026
+
+The Editors, Geothermics
+
+Dear Editors,
+
+I submit the manuscript "{TITLE}" for consideration as a full-length article in Geothermics.
+
+Silica scaling sets the lowest temperature at which separated brine can be reinjected, so reinjection temperature and inhibitor dose are usually held at fixed, conservative set-points. The manuscript asks whether those set-points can be re-optimized each day from the measurements a field already takes, when the kinetic model is known to be wrong: the classical Rothbaum and Rohde rate law, fitted to its primary data, differs from the independent 2024 laboratory dataset of Scott et al. by a factor of \NUM{KrMed} at the median.
+
+A simulated brine line built from Philippine field chemistry (the Tiwi endmembers), laboratory kinetics and solubility, and the non-monotonic inhibitor response reported by Gallup is used to compare fixed practice with daily optimization under several feedback corrections, on 20 plant realizations per mismatch regime. The main findings are these.
+
+- A daily correction of the scaling constraint must compare the measured rate with the model at the measured silica concentration. Compared with the design-case prediction it mistakes the optimizer's safety margin for model error; under sixfold faster kinetics the line then exceeded the scaling limit on \CL{S}{CAk0}{v} days per 45-day run with the measured anchor and on \CL{S}{CAnom}{v} with the design-case anchor.
+
+- With the measured anchor and an uncertainty back-off, the policy held \CL{S}{CAk1}{v} violation days at a \CL{S}{CAk1}{up}% gain in gross power under fast kinetics by holding the reinjection temperature at \CL{S}{CAk1}{T} °C, \NUM{dTsafeB} K above the uncorrected optimum; under random mismatch it gained \CL{B}{CAk0}{up}% with no violation.
+
+- Gaussian-process and machine-learned corrections did not improve on the scalar correction, so the scheme needs only grab samples and one rate measurement per day.
+
+- The laboratory comparison shows that the decay of a single monomeric-silica curve is second order, and it confirms the Gunnarsson and Arnórsson solubility correlation at a median of 1.05.
+
+The work fits the journal's interest in applied research grounded in laboratory data: it addresses reinjection and scale control directly, tests every kinetic and solubility component against independent laboratory data, states the limits of an in-silico study, and proposes a field trial that reuses the side-stream test lines of Philippine inhibitor programs.
+
+The code, the transcribed data and all result files are publicly available (https://github.com/beebzy-droid/e1-geothermal-silica-rto), and every number in the manuscript is generated from the result files. The manuscript has not been published and is not under consideration elsewhere. I am the sole author, I have no competing interests, and the use of generative AI tools is declared in the manuscript.
+
+Sincerely,
+
+Bien Don Busico
+
+University of the Philippines Diliman, Quezon City 1101, Philippines
+
+bienbusico@gmail.com

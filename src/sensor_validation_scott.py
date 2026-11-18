@@ -257,7 +257,9 @@ def make_figure(exps: List[ExperimentIntervals], res_all: pd.DataFrame,
 
     fig.tight_layout()
     p = figdir / "fig_sensor_validation_scott.png"
-    fig.savefig(p, dpi=200); plt.close(fig)
+    fig.savefig(p, dpi=300)
+    fig.savefig(p.with_suffix(".pdf"), metadata={"CreationDate": None})
+    plt.close(fig)
     return str(p)
 
 

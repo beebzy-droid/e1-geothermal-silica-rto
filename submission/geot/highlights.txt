@@ -1,0 +1,5 @@
+Classical silica kinetics differ sixfold from independent 2024 laboratory data
+Daily optimization of reinjection temperature and inhibitor dose from sparse data
+Feedback must use measured silica, not the design-case brine composition
+Design-case feedback: 15.80 violation days per 45-day run; measured silica: 1.60
+A scalar daily correction matched Gaussian-process and machine-learned corrections

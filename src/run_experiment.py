@@ -27,8 +27,15 @@ RESULTS = Path(__file__).parent.parent / "results"
 FIGURES = Path(__file__).parent.parent / "figures"
 
 import sys
+import tempfile
 
 SMOKE = "--smoke" in sys.argv    # reduced scale: verifies the pipeline only
+if SMOKE:
+    # A smoke run must never overwrite full-scale results or figures
+    # (it did once: a reduced-scale figure reached a compiled manuscript).
+    _tmp = Path(tempfile.mkdtemp(prefix="e1_smoke_"))
+    RESULTS, FIGURES = _tmp / "results", _tmp / "figures"
+    RESULTS.mkdir(); FIGURES.mkdir()
 
 PLANTS = list(range(3 if SMOKE else 8))
 DAYS = 20.0 if SMOKE else 90.0
@@ -86,7 +93,8 @@ def main() -> None:
                  "per-plant temporal split; mean ± sd)")
     ax.legend()
     fig.tight_layout()
-    fig.savefig(FIGURES / "fig_scarcity_sweep.png", dpi=200)
+    fig.savefig(FIGURES / "fig_scarcity_sweep.png", dpi=300)
+    fig.savefig(FIGURES / "fig_scarcity_sweep.pdf", metadata={"CreationDate": None})
     plt.close(fig)
 
     # ---- Transfer boundary (secondary, honest limitation) ----
@@ -123,7 +131,12 @@ def main() -> None:
     print("    credibility mechanism is the safety interlock, not "
           "decoration.")
 
-    print("\nDone. Commit results/ and figures/ after visual QA.")
+    if SMOKE:
+        print(f"\nSmoke outputs (discarded): {RESULTS.parent}")
+    else:
+        from provenance import stamp
+        stamp("table1")
+        print("\nDone. Commit results/ and figures/ after visual QA.")
 
 
 if __name__ == "__main__":

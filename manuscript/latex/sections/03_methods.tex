@@ -1,0 +1,225 @@
+\section{Simulated line, soft sensor and optimizer}\label{sec:methods}
+
+\subsection{Simulated brine line}\label{sec:plant}
+
+An estimator or an optimizer tested against a plant that behaves
+exactly as its model assumes proves little. The simulated line
+therefore uses the kinetics of Section~\ref{sec:kinetics} with
+structured deviations, each parameterized and documented. The true
+polymerization rate is
+\begin{equation}\label{eq:truth}
+r_{\mathrm{true}} \;=\; f_u(u)\, e^{B(T)}\, k(T)\, s^{\,n},
+\qquad s = C - C_e(T)\,\beta_e ,
+\end{equation}
+gated by an induction clock. Here $k(T)$ and $C_e(T)$ are the
+literature-fitted rate constant and solubility; $B(T)$ is a smooth
+log-normal bias drawn per plant on the seven kinetic isotherm nodes
+($\sigma = 0.35$); the reaction order is drawn as
+$n \sim \mathcal{N}(4, 0.15)$ and clipped to $[3.6, 4.4]$, in keeping
+with the ``approximately fourth order'' of the source data;
+$\beta_e \sim \mathcal{N}(1, 0.03)$ perturbs the solubility; and $f_u$
+is a per-plant instance of the non-monotonic dose--response family of
+Section~\ref{sec:kinetics}, with the maximum suppression drawn about
+0.50 (standard deviation 0.10), the dose of maximum effect drawn
+log-normally about 1~ppm (log standard deviation 0.25), and a mild
+reversal on overdose. The induction period is fitted from the primary
+kinetic dataset, $\log_{10} P = a + b \log_{10} s + cT$ with
+$b = -4.31$ and $r^2 = 0.88$, a relation that reproduces the source
+publication's own graphical correlation. The plant keeps a
+supersaturation-exposure clock that the model lacks.
+
+The mixture weights of the four endmembers follow a mean-reverting
+Ornstein--Uhlenbeck process about the operating composition, and the
+flash fraction fluctuates within $[0.20, 0.30]$, so that the separated
+brine wanders inside the flashed envelope while remaining stationary
+(a drift of about 1.3\% over ten days). An earlier random-walk form,
+which drifted toward the mixture centroid and diluted the brine over
+time, was replaced, and stationarity is now one of the repository's
+automated checks.
+
+The measurement layer follows what a shift-based operation provides:
+silica grab samples every 8~h at 5\% relative noise, a continuous line
+temperature with $\sigma = 0.3$~$^{\circ}$C, and one daily measurement
+of the trailing-24-h mean polymerization rate at 10\% relative noise.
+The rate measurement stands for a daily polymerization test, in which
+the decline of monomeric silica in a brine sample is followed at line
+conditions as in field inhibitor trials~\citep{baltazar2014grc}, or for
+an online scale sensor~\citep{okazaki2017fiber}. A fourteen-day episode
+thus provides 42 concentration samples and 14 rate labels against
+2{,}016 hidden values of the true rate. A step-wise interface reproduces
+the batch simulator's trajectory to machine precision, so that in
+closed loop the optimizer decides each day from what it has observed.
+
+\subsection{Hybrid soft sensor}\label{sec:sensor}
+
+The sensed quantity is the trailing-24-h mean polymerization rate, the
+quantity that accumulates scale and the one the optimizer constrains.
+The sensor is a parallel hybrid~\citep{thompson1994modeling,%
+vonstosch2014hybrid},
+\begin{equation}\label{eq:sensor}
+\hat r \;=\; \max\!\Big[\,0,\;
+\exp\!\big(\log(1{+}r_{\mathrm{core}}) + \lambda\, g_{\theta}(x)\big) - 1
+\Big],
+\end{equation}
+in which $r_{\mathrm{core}}$ is the trailing mean of the kinetic core
+combined with the nominal dose--response, and $g_{\theta}$ is a
+gradient-boosted residual~\citep{ke2017lightgbm} in $\log(1{+}\cdot)$
+space over causal trailing-window aggregates of the measurements only;
+a code-level guard raises an error if any hidden plant variable reaches
+the feature set. Each sensor is trained on its own plant's sparse daily
+labels under strict temporal splits, the standard soft-sensor
+protocol~\citep{kadlec2009data}.
+
+The protocol matters. Asked to generalize zero-shot to unseen plant
+realizations, the residual lost to both a pure-physics and a pure-data
+baseline. The reason is structural: per-plant mismatch cannot be
+predicted before any data from that plant exist, whereas a sensor
+trained on its plant's history and predicting forward in time can
+identify that plant's bias. Two protective mechanisms follow. The
+residual weight $\lambda$ in Eq.~\eqref{eq:sensor} is set by
+leave-one-out (LOO) credibility on the training labels,
+\begin{equation}\label{eq:lambda}
+\lambda^{\ast} = \min\!\Big(1,\, \max\!\Big(0,\,
+\frac{\langle e, \tilde r\rangle}{\langle \tilde r, \tilde r\rangle}\Big)\Big),
+\quad \text{with } \lambda = 0 \text{ unless the LOO SSE improves by at least } 15\%,
+\end{equation}
+where $e$ collects the residual targets and $\tilde r$ their LOO
+predictions, so that the correction is used only to the extent that it
+has shown out-of-sample signal and the sensor falls back to its physics
+prior when labels are few or uninformative. The same LOO computation
+gives the residual's prediction-error standard deviation
+$\sigma_{\mathrm{LOO}}$, which the optimizer can use as the sensor's
+own statement of uncertainty.
+
+\subsection{Daily optimization of temperature and dose}\label{sec:rto}
+
+The decision variables are the reinjection temperature set-point and
+the inhibitor dose, $(T_r, u)$, refreshed once a day following the
+two-layer structure of steady-state real-time
+optimization~\citep{darby2011rto}. The objective is the revenue of the
+power in Eq.~\eqref{eq:power} minus the inhibitor cost. The scaling
+constraint is enforced on every vertex of the brine envelope at the
+adverse flash bound,
+\begin{equation}\label{eq:rto}
+\max_{T_r,\,u}\; J(T_r, u)
+\quad \text{s.t.} \quad
+r_v(T_r, u) \;\le\; r_{\max} \quad \forall v \in \mathcal{V},
+\end{equation}
+where $r_v = k(T_r)\,(C_v - C_e(T_r))^4 f(u)$ is the kinetic core at
+the silica concentration $C_v$ of vertex $v$, $f$ is the nominal
+dose--response, and $r_{\max} = 0.5$~g\,t$^{-1}$\,min$^{-1}$
+(Section~\ref{sec:units} relates it to wall growth). The problem is
+solved by dense grid search over 95--175~$^{\circ}$C and 0--4~ppm
+($161 \times 81$ points, steps of 0.5~K and 0.05~ppm): on a bounded
+two-dimensional decision space the grid is global, deterministic and
+auditable, and its vectorized form is checked against the reference
+solver at start-up. Solved once and held, Eq.~\eqref{eq:rto} is the
+open-loop robust policy.
+
+\subsection{Feedback corrections compared}\label{sec:feedback}
+
+Once a day the plant returns one noisy label $\ell_t$ of the
+trailing-24-h mean rate. Three ways of using it are compared, all of
+which correct the constraint of Eq.~\eqref{eq:rto} and leave the
+objective unchanged. The gradient corrections of full modifier
+adaptation~\citep{marchetti2009modifier,marchetti2010dual} are not
+attempted, because one noisy label per day does not support estimating
+plant gradients.
+
+\subsubsection{Scalar correction and its anchor}\label{sec:anchor}
+
+The zeroth-order scheme of \citet{chachuat2008constraint} filters the
+constraint bias,
+\begin{equation}\label{eq:ca}
+\varepsilon_t = (1-\alpha)\,\varepsilon_{t-1}
+ + \alpha\,\big(\ell_t - r_a(T_{r,t}, u_t)\big)
+\quad \text{and} \quad
+r_v + \varepsilon_t \le r_{\max},
+\end{equation}
+with $\alpha = 0.5$. A log-space variant filters
+$\ln \ell_t - \ln r_a$ and scales the constraint by $e^{\theta_t}$. The
+model rate $r_a$ against which the label is compared is the
+\emph{anchor} of the correction, and the results turn on it. With the
+\emph{design-case anchor}, $r_a = r_B$: the kinetic core at the
+composition the optimizer is solved against, the envelope vertex
+nearest the operating brine at the adverse flash bound. With the
+\emph{measured anchor}, $r_a = k(T_r)\,(C_m - C_e(T_r))^4 f(u)$: the
+core at the latest silica grab sample $C_m$.
+
+\subsubsection{Gaussian-process residual}\label{sec:gp}
+
+The constraint model becomes $\log(1+\hat r_v) = \log(1+r_v) + \mu(x)$,
+where $\mu$ is the posterior mean of a Gaussian process trained on the
+residual targets $\log(1+\ell_t) - \log(1+r_a)$ at the measured anchor,
+with inputs $x = (T_r, u, C_m - C_e)$, a constant mean and a
+squared-exponential kernel with one length scale per input plus noise.
+Hyperparameters are chosen by exact marginal likelihood over a fixed
+grid, so the fit is deterministic. This arm takes from modifier
+adaptation with Gaussian
+processes~\citep{ferreira2018gpma,delriochanona2021tale} the idea of a
+learned mismatch model that reports its own uncertainty. It does not
+implement those methods' cost modifiers, acquisition functions or trust
+regions, and it tests the regressor, not those algorithms.
+
+\subsubsection{Hybrid sensor}\label{sec:hybridarm}
+
+The trained sensor of Section~\ref{sec:sensor} is used as the
+constraint model, $\log(1+\hat r_v) = \log(1+r_v) + \lambda\,
+g_\theta(x)$, queried at steady state across the decision grid. Its
+residual target and anchor are those of the Gaussian-process arm. The
+two differ in the regressor and in the inputs: the hybrid receives the
+sensor's full set of trailing-window features, the Gaussian process the
+three listed above.
+
+\subsubsection{Uncertainty back-off}\label{sec:backoff}
+
+Each correction can be backed off by a gain $\kappa$ times its own
+uncertainty estimate,
+\begin{equation}\label{eq:backoff}
+\text{scalar: } r_v + \varepsilon_t + \kappa\,\sigma_u \le r_{\max},
+\qquad
+\text{learned: } \log(1+\hat r_v) + \kappa\,\sigma \le \log(1+r_{\max}),
+\end{equation}
+where $\sigma_u$ is the standard deviation of the scalar scheme's
+one-step prediction error over the trailing 14 days, and $\sigma$ is the
+Gaussian-process predictive standard deviation or the hybrid's
+$\sigma_{\mathrm{LOO}}$. The gain is swept over
+$\kappa \in \{0, 0.5, 1, 2\}$. The three uncertainty estimates have
+different scales, so equal $\kappa$ does not mean equal caution, and the
+families are compared as curves over the sweep, not gain by gain. The
+learned models are refitted weekly once seven labels exist. Until then
+they run the measured-anchored scalar correction restricted to
+tightening ($\varepsilon \ge 0$), so that feedback cannot relax the
+constraint before a model has earned credibility.
+
+\subsection{Simulation experiments}\label{sec:design}
+
+The estimation experiment simulates \NUM{T1plants} plant realizations
+for 90 days each; sensors are trained on the labels of the first 60
+days and tested on the final 30.
+
+The closed-loop experiment runs every policy on \NUM{CLplantsB} plant
+realizations for \NUM{CLdays} days in each of two regimes. The
+\emph{benign} regime uses the random per-plant deviations of
+Section~\ref{sec:plant}. The \emph{stress} regime is a single-factor
+perturbation: the plant's true rate is six times the model's, with all
+random draws set to zero. Its size is measured, not chosen; it is the
+median gap of Section~\ref{sec:labtest}. A violation day is a day whose
+realized trailing-24-h mean rate exceeds $r_{\max}$. Violations are
+counted on the realized plant, not on the worst-case vertex of the
+envelope, from day 2 and, after the 8-day warm-up of the learned models,
+from day 9. Power gains are relative to fixed practice. Every policy
+meets the same brine and mismatch realization on a given plant, so
+policies are compared by paired differences over plants, with seeded
+percentile-bootstrap 95\% intervals (4{,}000 resamples, plants as the
+resampling unit).
+
+Two kinds of evidence are kept apart. On six of the twenty plants per
+regime, the hybrid arm at $\kappa \in \{0, 1\}$ and the open-loop
+policy formed a protocol whose pass criteria were fixed before it was
+run; its verdicts are reported as registered in
+Section~\ref{sec:models}. Everything else in
+Sections~\ref{sec:anchoring} to~\ref{sec:operating}, namely the
+anchoring ablation, the scalar and Gaussian-process families, the gain
+sweep and the fourteen further plants, was added afterwards with
+earlier results in view, and is post hoc.

@@ -1,0 +1,5 @@
+Hybrid soft sensor cuts scaling-rate error 51% versus its kinetic core
+Feedback anchored at the design case confounds safety margin with model error
+Same modifier: 15.80 violation days at design case, 1.60 at measured silica
+Scalar, Gaussian-process and hybrid corrections trace overlapping frontiers
+Kinetics, solubility and sensing validated on independent 2024 laboratory data

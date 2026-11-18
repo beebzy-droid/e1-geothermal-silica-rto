@@ -167,3 +167,57 @@ not before.
   1.64 mm/yr across the 90–175 °C constraint-active envelope; Sobol
   r_max band spans it. §6 caveat retired in manuscript + submission
   package; gate now 94 checks / 13 modules.
+
+- 2026-11-11 — v1.9 — DESK REJECT AT JPC (JPROCONT-D-26-01181, 2026-11-09,
+  "does not provide any significant contribution to process systems and
+  process control") → TARGET IS NOW Computers & Chemical Engineering
+  (transfer offered). The pre-transfer review found FIVE DEFECTS in the
+  submitted version, all corrected in P8b:
+  (1) UNFAIR BASELINE. The scalar feedback arm formed its innovation at
+      the design-case brine composition (envelope vertex B at the adverse
+      flash bound) while the hybrid arm saw the measured silica. The claim
+      "hybrid is the only arm safe in both regimes" was an artifact of
+      that. Fix: measured-anchored constraint adaptation is the primary
+      baseline; design-case arms kept as an anchoring ablation; same fix
+      in the hybrid's own warm-up path.
+  (2) STALE TABLE 1. Its numbers (0.117/0.196/0.227) came from a run made
+      BEFORE the OU brine-dynamics fix and were never regenerated. Audit:
+      setting the reversion to zero reproduces them exactly. Under the
+      corrected plant: hybrid 0.170, physics 0.346, pure ML 0.258
+      (−51% / −34%; within ×2: 84/41/64%).
+  (3) SMOKE-SCALE FIGURE. The compiled PDF's scarcity figure was the
+      3-plant smoke plot (a --smoke run had overwritten the file).
+  (4) PLACEHOLDER REFERENCE. kobayashi2024mahanagdong (title/author "to
+      confirm") was cited; removed. Closest prior art was uncited: now
+      cited and positioned (Chachuat 2008 constraint adaptation; Marchetti
+      2016 review; de Avila Ferreira 2018 and del Rio Chanona 2021 GP-MA;
+      Sansana 2021), all Crossref-verified.
+  (5) NO AI DECLARATION, which Elsevier requires; added, with the software
+      use described in Appendix B.
+  CORRECTED RESULTS (20 plants × 45 d per regime; paired bootstrap CIs):
+  anchoring decides safety — same additive modifier 15.80 → 1.60 violation
+  days under ×6 stress (Δ 14.2, CI 13.2–15.3) and 5.60 → 0.00 benign.
+  MECHANISM (anchoring_diagnostic.py): the design-case model over-predicts
+  the realized-brine model by a median ×6.5 — the robust margin — which
+  under the ×6 stress cancels the kinetic error (label/model ratio median
+  1.1: the modifier sees nothing) and in the benign regime is read as
+  conservatism and removed. Once anchored to the measurement, scalar, GP
+  and hybrid families trace overlapping frontiers over κ ∈ {0, 0.5, 1, 2};
+  NO learned model dominates the scalar modifier (hybrid: +2–4 pts uplift
+  and more violations at equal κ; GP: weakly inside the scalar curve).
+  The original hypothesis (N2/N3: learned, uncertainty-aware correction
+  beats scalar adaptation) is NOT SUPPORTED. What stands: N1 as an
+  ESTIMATION result, N4/N4b (validation), N5 (benchmark), plus the
+  anchoring principle as the new control-layer finding. All of it is
+  POST HOC except the six-plant registered verdicts (still E3′/E5 PASS,
+  κ=0 zero-target still missed: 2.33 and 0.33 post-warm-up days with the
+  corrected warm-up).
+  NEW SAFEGUARDS: provenance.py (gate fails when committed results were
+  not produced by the current code); smoke runs write to a temp dir;
+  manuscript/make_numbers.py generates every experimental number and both
+  table bodies from results/*.csv and refuses to build if a prose claim
+  is false in the data; build_submission.py refuses placeholder
+  citations. Gate: 16 modules, 111 checks. New title: "Hybrid soft
+  sensing and measurement-anchored real-time optimization for silica
+  scaling control in Philippine geothermal fields: a comparison of
+  feedback schemes with out-of-sample validation".

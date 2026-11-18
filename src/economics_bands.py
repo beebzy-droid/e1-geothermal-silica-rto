@@ -127,7 +127,9 @@ def make_outputs(bd: pd.DataFrame) -> str:
                  "(decisions verified envelope-invariant)")
     fig.tight_layout()
     p = _FIGDIR / "fig_economics_bands.png"
-    fig.savefig(p, dpi=200); plt.close(fig)
+    fig.savefig(p, dpi=300)
+    fig.savefig(p.with_suffix(".pdf"), metadata={"CreationDate": None})
+    plt.close(fig)
     return str(p)
 
 

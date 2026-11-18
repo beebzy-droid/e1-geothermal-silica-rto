@@ -1,0 +1,17 @@
+module,passed,total
+silica_saturation.py,12,12
+brine_speciation.py,6,6
+silica_kinetics.py,10,10
+temperature_lever.py,6,6
+synthetic_plant.py,11,11
+soft_sensor.py,7,7
+robust_rto.py,7,7
+scott2024_dataset.py,5,5
+kinetics_validation.py,7,7
+sensor_validation_scott.py,7,7
+sensitivity_study.py,5,5
+economics_bands.py,5,5
+weres_deposition.py,6,6
+gp_residual.py,5,5
+feedback_arms_check.py,6,6
+provenance.py,6,6

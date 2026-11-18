@@ -1,0 +1,36 @@
+\section{Conclusions}\label{sec:conclusions}
+
+Silica scaling limits how far geothermal brine can be cooled before
+reinjection, and the rate law used to set that limit differs from
+independent laboratory data by a factor of \NUM{KrMed} at the median.
+Under that uncertainty, and with feedback limited to silica grab
+samples and one rate measurement per day, this study reached four
+conclusions.
+\begin{enumerate}
+\item A daily correction of the scaling constraint must compare the
+measured rate with the model at the measured silica concentration.
+Compared with the design-case prediction, it mistakes the optimizer's
+safety margin for model error: under sixfold faster kinetics the line
+exceeded the scaling limit on \CL{S}{CAnom}{v} days per 45-day run,
+against \CL{S}{CAk0}{v} with the measured anchor.
+\item With the right anchor a scalar bias correction is enough.
+Gaussian-process and gradient-boosted corrections traced overlapping
+trade-offs between power and safety and did not improve on it. A
+back-off of $\kappa = 1$ held violations to \CL{S}{CAk1}{v} days at a
+\CL{S}{CAk1}{up}\% power gain over fixed practice under fast kinetics,
+and without systematic kinetic error the correction gained
+\CL{B}{CAk0}{up}\% with no violation on any plant.
+\item In plant terms the safe response to fast kinetics is a few
+kelvin: the corrected policy raised the mean reinjection temperature
+from \CL{S}{Open}{T} to \CL{S}{CAk1}{T}~$^{\circ}$C, and the optimized
+dose stayed below 1~ppm throughout.
+\item A hybrid soft sensor estimates the scaling rate from sparse daily
+labels with \NUM{T1redPh}\% less error than its kinetic core, provided
+its correction is earned from the plant's own labels.
+\end{enumerate}
+The laboratory comparison also returned two findings of geochemical
+interest: the decay of a single monomeric-silica curve is second order,
+against the fourth-order peak-rate law, and the 2000 solubility
+correlation agrees with the 2024 endpoints at a median of
+$1.05\times$. A field trial on a side stream with inspection spools is
+the next step.
