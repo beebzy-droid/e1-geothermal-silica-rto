@@ -48,8 +48,10 @@ the manuscript under `submission/geot/`.
 | `manuscript/` | LaTeX sources, the number/figure build scripts, and the Word (`.docx`) builder |
 | `submission/geot/` | *Geothermics* submission package (manuscript, figures, supplement, letters) |
 | `submission/cace/` | Earlier *Computers & Chemical Engineering* package, kept as a record |
-| `literature/` | `references.bib` and the third-party data notice |
-| `docs/` | Project notes |
+| `literature/` | `references.bib` |
+| `docs/` | Design notes (uncertainty-quantification commitment) |
+| `DATA_NOTICE.md` | Third-party data and how to obtain it |
+| `LICENSE`, `LICENSE-DATA.md` | Licensing (see below) |
 
 ## Reproducing the results
 
@@ -85,6 +87,24 @@ Code, transcribed primary data and all result files are in this repository.
 The independent validation dataset is the supplementary material of Scott et
 al. (2024), obtained from the article (doi:10.1016/j.gca.2024.02.017); it is
 **not** redistributed here. See `DATA_NOTICE.md`.
+
+## License
+
+- Code (`src/`, `manuscript/*.py`): MIT, see `LICENSE`.
+- Results, figures and transcribed data (`results/`, `figures/`,
+  `src/data/`): CC BY 4.0, see `LICENSE-DATA.md`.
+- Manuscript text and submission package (`manuscript/latex/`,
+  `submission/`): all rights reserved while under review.
+- Third-party files keep their own licenses (e.g. the CSL style,
+  CC BY-SA 3.0). The Scott et al. (2024) dataset is not redistributed.
+
+## Citation
+
+Until the article is published, cite the repository:
+
+> Busico, B.D. (2026). *Real-time optimization of reinjection temperature
+> and inhibitor dose for geothermal silica scaling control: code and
+> results.* https://github.com/beebzy-droid/e1-geothermal-silica-rto
 
 ## Author
 
